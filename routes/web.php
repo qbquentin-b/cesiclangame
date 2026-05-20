@@ -117,7 +117,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/troops/train', [TroopController::class, 'train'])->name('troops.train');
     Route::post('/troops/collect', [TroopController::class, 'collect'])->name('troops.collect');
     Route::post('/troops/deploy', [TroopController::class, 'deploy'])->name('troops.deploy');
-    Route::patch('/commanders/{userCommander}/activate', [CommanderController::class, 'setActive'])->name('commanders.activate');
+    Route::post('/commanders/{userCommander}/activate', [CommanderController::class, 'setActive'])->name('commanders.activate');
     Route::post('/commanders/deactivate', [CommanderController::class, 'deactivate'])->name('commanders.deactivate');
 
     Route::get('/games', [GameController::class, 'index'])->name('games');

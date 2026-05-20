@@ -424,7 +424,7 @@ export default function TroopsView({ soldierTypes, troops, commanders, activeCom
     };
 
     const handleActivate = (userCommanderId) => {
-        router.patch(`/commanders/${userCommanderId}/activate`, {}, { preserveScroll: true });
+        router.post(`/commanders/${userCommanderId}/activate`, {}, { preserveScroll: true });
     };
 
     const handleDeactivate = () => {
