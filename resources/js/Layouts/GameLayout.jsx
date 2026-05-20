@@ -8,6 +8,7 @@ const NAV_TABS = [
     { id: 'village',  name: 'Village',   icon: 'location_city',     link: '/village' },
     { id: 'market',   name: 'Marché',    icon: 'storefront',        link: '/market' },
     { id: 'drops',    name: 'Drops',     icon: 'scrollable_header', link: '/drops' },
+    { id: 'casino',   name: 'Casino',    icon: 'casino',            link: '/casino' },
     { id: 'guerres',  name: 'Guerres',   icon: 'swords',            link: '/wars' },
     { id: 'troupes',  name: 'Troupes',   icon: 'shield_person',     link: '/troops' },
     { id: 'jeux',     name: 'Jeux',      icon: 'casino',            link: '/games' },

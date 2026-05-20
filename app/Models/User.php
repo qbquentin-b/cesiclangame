@@ -18,6 +18,7 @@ class User extends Authenticatable
         'password',
         'crystals',
         'war_points',
+        'slot_free_spins',
         'clan_id',
         'clan_rank',
         'level',

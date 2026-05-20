@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BlackjackController;
+use App\Http\Controllers\CasinoController;
 use App\Http\Controllers\ChestController;
 use App\Http\Controllers\ClanAnnouncementController;
 use App\Http\Controllers\ClanChatController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\CommanderController;
 use App\Http\Controllers\CraftingController;
 use App\Http\Controllers\DailyGameController;
 use App\Http\Controllers\LegendaryWarController;
+use App\Http\Controllers\SlotController;
 use App\Http\Controllers\WarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DropController;
@@ -164,6 +167,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Crafting
     Route::post('/craft', [CraftingController::class, 'craft'])->name('craft');
+
+    // Casino
+    Route::get('/casino', [CasinoController::class, 'index'])->name('casino');
+    Route::post('/casino/slot/spin', [SlotController::class, 'spin'])->name('casino.slot.spin');
+    Route::get('/casino/blackjack/tables', [BlackjackController::class, 'tables'])->name('casino.bj.tables');
+    Route::post('/casino/blackjack/create', [BlackjackController::class, 'create'])->name('casino.bj.create');
+    Route::post('/casino/blackjack/{table}/join', [BlackjackController::class, 'join'])->name('casino.bj.join');
+    Route::post('/casino/blackjack/{table}/leave', [BlackjackController::class, 'leave'])->name('casino.bj.leave');
+    Route::post('/casino/blackjack/{table}/start', [BlackjackController::class, 'start'])->name('casino.bj.start');
+    Route::post('/casino/blackjack/{table}/bet', [BlackjackController::class, 'bet'])->name('casino.bj.bet');
+    Route::post('/casino/blackjack/{table}/hit', [BlackjackController::class, 'hit'])->name('casino.bj.hit');
+    Route::post('/casino/blackjack/{table}/stand', [BlackjackController::class, 'stand'])->name('casino.bj.stand');
+    Route::get('/casino/blackjack/{table}/state', [BlackjackController::class, 'state'])->name('casino.bj.state');
 
     Route::middleware([IsAdmin::class])->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin');
