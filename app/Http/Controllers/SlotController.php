@@ -22,7 +22,7 @@ class SlotController extends Controller
         'epee'       => 15,
         'bouclier'   => 8,
         'or'         => 4,
-        'nourriture' => 2,
+        'nourriture' => 3,
     ];
 
     public function spin(Request $request)
@@ -114,9 +114,9 @@ class SlotController extends Controller
             return ['amount' => $bet * $mult, 'type' => 'win', 'multiplier' => $mult];
         }
 
-        // 2 identical
+        // 2 identical — return full bet (break even)
         if ($center[0] === $center[1] || $center[1] === $center[2] || $center[0] === $center[2]) {
-            return ['amount' => (int) floor($bet * 0.5), 'type' => 'small_win'];
+            return ['amount' => $bet, 'type' => 'small_win'];
         }
 
         return ['amount' => 0, 'type' => 'loss'];
