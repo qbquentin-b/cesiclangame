@@ -50,6 +50,28 @@ function joinDate(isoDate) {
 
 const card = { background: G.cardLt, border: `1px solid ${G.borderA}`, borderRadius: 16 };
 
+function StatCard({ icon, iconColor, label, value, valueColor, sub }) {
+    return (
+        <div className="rounded-2xl p-5" style={card}>
+            <div className="text-[10px] uppercase tracking-widest font-bold mb-3" style={{ color: G.parchDm }}>
+                {label}
+            </div>
+            <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-[28px]"
+                      style={{ color: iconColor, fontVariationSettings: "'FILL' 1" }}>
+                    {icon}
+                </span>
+                <div>
+                    <div className="font-headline text-2xl font-black" style={{ color: valueColor }}>
+                        {value}
+                    </div>
+                    {sub && <div className="font-label text-[10px]" style={{ color: G.parchDm }}>{sub}</div>}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function PlayerProfile({
     profile,
     is_self,
@@ -220,37 +242,32 @@ export default function PlayerProfile({
 
                 {/* ── Stats ─────────────────────────────────────────── */}
                 <div className="grid grid-cols-2 gap-4">
-                    <div className="rounded-2xl p-5" style={card}>
-                        <div className="text-[10px] uppercase tracking-widest font-bold mb-3" style={{ color: G.parchDm }}>
-                            Fortune
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <span className="material-symbols-outlined text-[28px]"
-                                  style={{ color: G.gold, fontVariationSettings: "'FILL' 1" }}>diamond</span>
-                            <div>
-                                <div className="font-headline text-2xl font-black" style={{ color: G.gold }}>
-                                    {profile.crystals.toLocaleString('fr-FR')}
-                                </div>
-                                <div className="font-label text-[10px] uppercase" style={{ color: G.parchDm }}>Cristaux</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="rounded-2xl p-5" style={card}>
-                        <div className="text-[10px] uppercase tracking-widest font-bold mb-3" style={{ color: G.parchDm }}>
-                            Gloire militaire
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <span className="material-symbols-outlined text-[28px]"
-                                  style={{ color: G.crimBrt, fontVariationSettings: "'FILL' 1" }}>swords</span>
-                            <div>
-                                <div className="font-headline text-2xl font-black" style={{ color: G.crimBrt }}>
-                                    {profile.war_points.toLocaleString('fr-FR')}
-                                </div>
-                                <div className="font-label text-[10px] uppercase" style={{ color: G.parchDm }}>Points de guerre</div>
-                            </div>
-                        </div>
-                    </div>
+                    <StatCard
+                        icon="diamond" iconColor={G.gold}
+                        label="Cristaux actuels"
+                        value={profile.crystals.toLocaleString('fr-FR')}
+                        valueColor={G.gold}
+                    />
+                    <StatCard
+                        icon="swords" iconColor={G.crimBrt}
+                        label="Points de guerre"
+                        value={profile.war_points.toLocaleString('fr-FR')}
+                        valueColor={G.crimBrt}
+                    />
+                    <StatCard
+                        icon="casino" iconColor="#A855F7"
+                        label="Gains nets casino"
+                        value={(profile.casino_winnings >= 0 ? '+' : '') + profile.casino_winnings.toLocaleString('fr-FR')}
+                        valueColor={profile.casino_winnings >= 0 ? '#4ADE80' : '#F87171'}
+                        sub="cristaux (slot + blackjack)"
+                    />
+                    <StatCard
+                        icon="payments" iconColor={G.goldBrt}
+                        label="Total dépensé"
+                        value={profile.total_spent.toLocaleString('fr-FR')}
+                        valueColor={G.parch}
+                        sub="toutes activités confondues"
+                    />
                 </div>
 
                 {/* ── Commanders ────────────────────────────────────── */}

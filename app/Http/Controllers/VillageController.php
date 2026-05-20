@@ -112,7 +112,8 @@ class VillageController extends Controller
             $u->metal    -= $metal;
             $u->food     -= $food;
             $u->gold     -= $gold;
-            $u->crystals -= $crystals;
+            $u->crystals    -= $crystals;
+            $u->total_spent += $crystals;
             $u->save();
 
             $b->contributed_wood     += $wood;

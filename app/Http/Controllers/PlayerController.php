@@ -35,14 +35,16 @@ class PlayerController extends Controller
 
         return Inertia::render('PlayerProfile', [
             'profile' => [
-                'id'           => $user->id,
-                'username'     => $user->username,
-                'level'        => $user->level,
-                'crystals'     => $user->crystals,
-                'war_points'   => $user->war_points,
-                'clan_rank'    => $user->clan_rank,
-                'last_seen_at' => $user->last_seen_at?->toIso8601String(),
-                'created_at'   => $user->created_at->toIso8601String(),
+                'id'              => $user->id,
+                'username'        => $user->username,
+                'level'           => $user->level,
+                'crystals'        => $user->crystals,
+                'war_points'      => $user->war_points,
+                'casino_winnings' => $user->casino_winnings,
+                'total_spent'     => $user->total_spent,
+                'clan_rank'       => $user->clan_rank,
+                'last_seen_at'    => $user->last_seen_at?->toIso8601String(),
+                'created_at'      => $user->created_at->toIso8601String(),
                 'clan'         => $user->clan ? [
                     'id'        => $user->clan->id,
                     'name'      => $user->clan->name,

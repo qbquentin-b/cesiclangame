@@ -72,7 +72,8 @@ class ClanController extends Controller
                 return back()->withErrors(['message' => 'Vous êtes déjà dans un clan']);
             }
 
-            $user->crystals -= 50;
+            $user->crystals    -= 50;
+            $user->total_spent += 50;
             $user->save();
 
             $colors = ['#ad2b1f', '#3c6704', '#1f5dad', '#765a19', '#6b2082', '#0f6e6e', '#a85b14', '#2a3b4c'];

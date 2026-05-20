@@ -80,7 +80,8 @@ class GameController extends Controller
             return back()->withErrors(['message' => 'Not enough crystals']);
         }
 
-        $user->crystals -= $request->amount;
+        $user->crystals    -= $request->amount;
+        $user->total_spent += $request->amount;
         $user->save();
 
         Bet::create([

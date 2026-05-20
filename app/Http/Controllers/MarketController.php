@@ -41,6 +41,7 @@ class MarketController extends Controller
                     abort(400, "Pas assez de cristaux.");
                 }
                 DB::table('users')->where('id', $user->id)->decrement('crystals', $request->offer_amount);
+                DB::table('users')->where('id', $user->id)->increment('total_spent', $request->offer_amount);
             } else {
                 $resourceType = str_replace('resource_', '', $request->offer_type);
                 $resource = DB::table('resources')
@@ -93,6 +94,7 @@ class MarketController extends Controller
                     abort(400, "Vous n'avez pas assez de cristaux.");
                 }
                 DB::table('users')->where('id', $user->id)->decrement('crystals', $offer->wanted_amount);
+                DB::table('users')->where('id', $user->id)->increment('total_spent', $offer->wanted_amount);
             } else {
                 $wantedResType = str_replace('resource_', '', $offer->wanted_type);
                 $buyerRes = DB::table('resources')

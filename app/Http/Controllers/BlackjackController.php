@@ -175,7 +175,9 @@ class BlackjackController extends Controller
         }
 
         $betAmount = (int) $request->bet;
-        $user->crystals -= $betAmount;
+        $user->crystals        -= $betAmount;
+        $user->casino_winnings -= $betAmount;
+        $user->total_spent     += $betAmount;
         $user->save();
 
         $player->update([
@@ -387,7 +389,8 @@ class BlackjackController extends Controller
 
             if ($payout > 0) {
                 $user = $player->user;
-                $user->crystals += $payout;
+                $user->crystals        += $payout;
+                $user->casino_winnings += $payout;
                 $user->save();
             }
         }

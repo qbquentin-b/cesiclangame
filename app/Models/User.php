@@ -29,6 +29,8 @@ class User extends Authenticatable
         'food',
         'gold',
         'last_seen_at',
+        'casino_winnings',
+        'total_spent',
     ];
 
     protected $casts = [

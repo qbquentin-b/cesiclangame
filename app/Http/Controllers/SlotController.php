@@ -40,7 +40,9 @@ class SlotController extends Controller
         if ($isFree) {
             $user->slot_free_spins -= 1;
         } else {
-            $user->crystals -= $bet;
+            $user->crystals        -= $bet;
+            $user->casino_winnings -= $bet;
+            $user->total_spent     += $bet;
             $jackpot = CasinoJackpot::first();
             $jackpot->amount += (int) floor($bet * 0.02);
             $jackpot->save();
@@ -61,7 +63,8 @@ class SlotController extends Controller
         $center = [$reels[0][1]['id'], $reels[1][1]['id'], $reels[2][1]['id']];
         $win    = $this->calcWin($center, $bet, $user);
 
-        $user->crystals += $win['amount'];
+        $user->crystals        += $win['amount'];
+        $user->casino_winnings += $win['amount'];
         $user->save();
 
         $jackpot = CasinoJackpot::first();
