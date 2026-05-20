@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chest;
-use App\Models\Hero;
-use App\Models\UserHero;
+use App\Models\Commander;
+use App\Models\UserCommander;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ChestController extends Controller
 {
@@ -35,21 +36,32 @@ class ChestController extends Controller
         $user->crystals += $contents['crystals'] ?? 0;
         $user->save();
 
-        $heroData = null;
-        if (!empty($contents['hero'])) {
-            $hero = Hero::find($contents['hero']);
-            if ($hero) {
-                \DB::table('user_heroes')->insert([
-                    'user_id'     => $user->id,
-                    'hero_id'     => $hero->id,
-                    'obtained_at' => now(),
-                    'created_at'  => now(),
-                    'updated_at'  => now(),
+        $commanderData = null;
+        if (!empty($contents['commander'])) {
+            $commander = Commander::find($contents['commander']);
+            if ($commander) {
+                UserCommander::create([
+                    'id'           => Str::uuid(),
+                    'user_id'      => $user->id,
+                    'commander_id' => $commander->id,
+                    'is_active'    => false,
+                    'obtained_at'  => now(),
                 ]);
-                $heroData = ['name' => $hero->name, 'emoji' => $hero->emoji];
+                $rarityEmoji = match($commander->rarity) {
+                    'legendary' => '👑',
+                    'epic'      => '🏆',
+                    'rare'      => '⚜️',
+                    default     => '⚔️',
+                };
+                $commanderData = [
+                    'name'   => $commander->name,
+                    'title'  => $commander->title,
+                    'rarity' => $commander->rarity,
+                    'emoji'  => $rarityEmoji,
+                ];
             }
-            $contents['hero'] = $heroData;
         }
+        $contents['commander'] = $commanderData;
 
         $chest->update([
             'status'    => 'opened',

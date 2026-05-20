@@ -26,27 +26,26 @@ class Chest extends Model
 
     public static function rollContents(string $type): array
     {
-        // 1 ressource principale tirée au hasard parmi food/wood/metal
         $main = ['food', 'wood', 'metal'][rand(0, 2)];
 
         return match ($type) {
             'common' => [
                 $main      => rand(25, 50),
-                'gold'     => rand(0, 1) ? rand(5, 10) : 0, // 50% chance de quelques pièces d'or
+                'gold'     => rand(0, 1) ? rand(5, 10) : 0,
                 'crystals' => 0,
-                'hero'     => null,
+                'commander' => null,
             ],
             'rare' => [
                 $main      => rand(60, 120),
                 'gold'     => rand(10, 25),
                 'crystals' => rand(2, 5),
-                'hero'     => null,
+                'commander' => null,
             ],
             'legendary' => [
-                $main      => rand(120, 250),
-                'gold'     => rand(30, 60),
-                'crystals' => rand(8, 18),
-                'hero'     => rand(1, 100) <= 60 ? Hero::inRandomOrder()->value('id') : null,
+                $main        => rand(120, 250),
+                'gold'       => rand(30, 60),
+                'crystals'   => rand(8, 18),
+                'commander'  => rand(1, 100) <= 60 ? Commander::inRandomOrder()->value('id') : null,
             ],
             default => [],
         };

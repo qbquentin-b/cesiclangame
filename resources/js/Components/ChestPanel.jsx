@@ -81,8 +81,8 @@ function OpeningAnimation({ chest, contents, onDone }) {
     useEffect(() => {
         if (phase !== 'reveal' || !contents) return;
         const rewards = Object.entries(contents)
-            .filter(([k, v]) => k !== 'hero' && v > 0)
-            .concat(contents.hero ? [['hero', contents.hero]] : []);
+            .filter(([k, v]) => k !== 'commander' && v > 0)
+            .concat(contents.commander ? [['commander', contents.commander]] : []);
         rewards.forEach(([k, v], i) => {
             setTimeout(() => setRewards(r => [...r, { key: k, val: v }]), i * 200);
         });
@@ -233,14 +233,19 @@ function OpeningAnimation({ chest, contents, onDone }) {
                     {/* Récompenses */}
                     <div className="px-6 pb-2 space-y-2">
                         {showRewards.map(({ key, val }, i) => {
-                            if (key === 'hero') {
+                            if (key === 'commander') {
                                 return (
                                     <div key={i} className="rounded-xl p-3 text-center"
                                          style={{ background: `${CHEST_META.legendary.color}15`, border: `1px solid ${CHEST_META.legendary.color}66`, animation: 'rewardFlyUp 0.4s ease-out' }}>
                                         <div className="text-3xl mb-1">{val?.emoji}</div>
                                         <div className="font-headline font-black text-sm" style={{ color: CHEST_META.legendary.color }}>
-                                            ✨ Héros : {val?.name}
+                                            {val?.name}
                                         </div>
+                                        {val?.title && (
+                                            <div className="font-label text-[10px] mt-0.5 opacity-70" style={{ color: CHEST_META.legendary.color }}>
+                                                {val.title}
+                                            </div>
+                                        )}
                                     </div>
                                 );
                             }
