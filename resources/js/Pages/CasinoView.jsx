@@ -92,21 +92,26 @@ function SlotMachine({ jackpot: initialJackpot, freeSpins: initialFreeSpins, cry
         setLastWin(null);
         setSpinning(true);
 
-        // Start reel animations
-        const animIntervals = [0, 1, 2].map(ri =>
-            setInterval(() => {
-                setAnimReels(prev => {
-                    const next = [...prev];
-                    next[ri] = [
-                        SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-                        SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-                        SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-                    ];
-                    return next;
-                });
-            }, 80)
-        );
-        intervalRefs.current = animIntervals;
+        // stoppedReels[ri] = true → fast interval skips that reel
+        const stoppedReels = [false, false, false];
+
+        // Single fast interval — all active reels at 65ms
+        const fastInterval = setInterval(() => {
+            setAnimReels(prev => {
+                const next = [...prev];
+                for (let ri = 0; ri < 3; ri++) {
+                    if (!stoppedReels[ri]) {
+                        next[ri] = [
+                            SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+                            SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+                            SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+                        ];
+                    }
+                }
+                return next;
+            });
+        }, 65);
+        intervalRefs.current = [fastInterval];
 
         try {
             const data = await apiFetch('/casino/slot/spin', {
@@ -114,15 +119,51 @@ function SlotMachine({ jackpot: initialJackpot, freeSpins: initialFreeSpins, cry
                 body: JSON.stringify({ bet }),
             });
 
-            // Stop animations after 1.5s
-            await new Promise(r => setTimeout(r, 1500));
-            stopAnimations();
-            setAnimReels([null, null, null]);
-
-            // Set final reels (convert server format to symbol objects)
             const finalReels = data.reels.map(col =>
                 col.map(sym => ({ id: sym.id, emoji: sym.emoji }))
             );
+
+            // Slow-down then stop each reel sequentially
+            // reel ri starts slowing at startMs, shows 3 decel frames at 160ms, then freezes
+            const slowThenStop = (ri, startMs) => new Promise(resolve => {
+                setTimeout(() => {
+                    stoppedReels[ri] = true; // stop fast interval for this reel
+                    let frame = 0;
+                    const iv = setInterval(() => {
+                        frame++;
+                        if (frame >= 3) {
+                            clearInterval(iv);
+                            setAnimReels(prev => {
+                                const next = [...prev];
+                                next[ri] = finalReels[ri];
+                                return next;
+                            });
+                            resolve();
+                        } else {
+                            setAnimReels(prev => {
+                                const next = [...prev];
+                                next[ri] = [
+                                    SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+                                    SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+                                    SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+                                ];
+                                return next;
+                            });
+                        }
+                    }, 160);
+                    intervalRefs.current = [...intervalRefs.current, iv];
+                }, startMs);
+            });
+
+            // Reel 0 at +100ms, reel 1 at +380ms, reel 2 at +660ms → all done ~1.15s
+            await Promise.all([
+                slowThenStop(0, 100),
+                slowThenStop(1, 380),
+                slowThenStop(2, 660),
+            ]);
+
+            stopAnimations();
+            setAnimReels([null, null, null]);
             setReels(finalReels);
 
             setCrystals(data.crystals);
@@ -131,14 +172,9 @@ function SlotMachine({ jackpot: initialJackpot, freeSpins: initialFreeSpins, cry
             setLastWin(data.win);
             router.reload({ only: ['auth'] });
 
-            // Flash animation
-            if (data.win.type === 'jackpot') {
-                setFlashType('jackpot');
-            } else if (data.win.type === 'free_spins') {
-                setFlashType('free_spins');
-            } else if (data.win.type === 'win' || data.win.type === 'small_win') {
-                setFlashType('win');
-            }
+            if (data.win.type === 'jackpot') setFlashType('jackpot');
+            else if (data.win.type === 'free_spins') setFlashType('free_spins');
+            else if (data.win.type === 'win' || data.win.type === 'small_win') setFlashType('win');
 
             flashTimer.current = setTimeout(() => setFlashType(null), 3000);
         } catch (err) {
@@ -873,12 +909,12 @@ export default function CasinoView({ jackpot, free_spins, crystals, my_table_id 
                         </div>
                     </div>
 
-                    {/* Crystals display */}
+                    {/* Crystals display — uses auth.user.crystals so it refreshes after reload */}
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl mt-2"
                          style={{ background: 'rgba(201,147,60,0.08)', border: `1px solid ${G.border}` }}>
                         <span className="text-lg">💎</span>
                         <span className="font-headline font-black" style={{ color: G.gold }}>
-                            {crystals.toLocaleString('fr-FR')} cristaux
+                            {(auth?.user?.crystals ?? crystals).toLocaleString('fr-FR')} cristaux
                         </span>
                     </div>
                 </div>
