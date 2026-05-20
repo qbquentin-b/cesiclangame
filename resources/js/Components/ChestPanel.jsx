@@ -99,7 +99,7 @@ function OpeningAnimation({ chest, contents, onDone }) {
     const rays = Array.from({ length: 12 }, (_, i) => (i / 12) * 360);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center"
+        <div className="fixed inset-0 z-[100] flex items-center justify-center"
              style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(6px)' }}>
 
             <style>{`
@@ -347,7 +347,7 @@ export default function ChestPanel({ chestCount = 0 }) {
         <>
             {/* Bouton flottant fixe en bas à droite */}
             <button onClick={handleOpenPanel}
-                    className="fixed z-30 flex items-center gap-2 px-4 py-3 rounded-2xl font-label text-xs font-black uppercase tracking-wider transition-all hover:brightness-125 active:scale-95"
+                    className="fixed z-[55] flex items-center gap-2 px-4 py-3 rounded-2xl font-label text-xs font-black uppercase tracking-wider transition-all hover:brightness-125 active:scale-95"
                     style={{
                         bottom: 28, right: 20,
                         background: localCount > 0 ? `linear-gradient(135deg, rgba(201,147,60,0.25), rgba(201,147,60,0.1))` : 'rgba(255,255,255,0.06)',
@@ -377,7 +377,7 @@ export default function ChestPanel({ chestCount = 0 }) {
 
             {/* Bottom sheet */}
             {open && (
-                <div className="fixed inset-0 z-40 flex items-end"
+                <div className="fixed inset-0 z-[60] flex items-end"
                      onClick={() => setOpen(false)}
                      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)' }}>
                     <div className="w-full rounded-t-3xl p-6"
