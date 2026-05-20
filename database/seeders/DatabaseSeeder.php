@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SoldierTypeSeeder::class,
             CommanderSeeder::class,
+            MapZoneSeeder::class,
         ]);
     }
 }
