@@ -13,6 +13,22 @@ export default {
     theme: {
         extend: {
             colors: {
+                /* Dark Forge Theme */
+                "forge": "#0A0705",
+                "forge-surface": "#140D08",
+                "forge-card": "#1E1208",
+                "forge-card-light": "#291A0C",
+                "gold": "#C9933C",
+                "gold-bright": "#F0C060",
+                "gold-dim": "#8B6914",
+                "crimson": "#8B1A1A",
+                "crimson-bright": "#C53030",
+                "forest": "#2D5A27",
+                "forest-bright": "#4A9040",
+                "parchment": "#F2E4C4",
+                "parchment-dim": "#D4BC85",
+                "forge-border": "rgba(201,147,60,0.2)",
+                /* Original Light Theme */
                 "on-primary-fixed": "#0f2000",
                 "on-secondary": "#ffffff",
                 "surface-container-lowest": "#ffffff",

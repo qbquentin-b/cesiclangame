@@ -3,9 +3,12 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-background font-body text-on-background min-h-screen overflow-x-hidden;
-    min-height: max(884px, 100dvh);
+  html, body {
+    background: #0A0705;
+    color: #F2E4C4;
+    min-height: 100dvh;
+    font-family: "Be Vietnam Pro", sans-serif;
+    overflow-x: hidden;
   }
 }
 
@@ -13,49 +16,247 @@
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+/* ─── Animations ──────────────────────────────────────────── */
+
+@keyframes gold-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 8px rgba(201,147,60,0.25); }
+  50%       { box-shadow: 0 0 28px rgba(201,147,60,0.55), 0 0 60px rgba(201,147,60,0.15); }
+}
+
+@keyframes pulse-crimson {
+  0%, 100% { box-shadow: 0 0 8px rgba(197,48,48,0.3); }
+  50%       { box-shadow: 0 0 24px rgba(197,48,48,0.6), 0 0 48px rgba(197,48,48,0.2); }
+}
+
+@keyframes float-up {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
+}
+
+@keyframes ember-flicker {
+  0%, 90%, 100% { opacity: 1;    filter: brightness(1); }
+  92%            { opacity: 0.82; filter: brightness(0.9); }
+  95%            { opacity: 0.95; filter: brightness(1.05); }
+  97%            { opacity: 0.85; filter: brightness(0.92); }
+}
+
+@keyframes slide-in-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes glow-breath {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(201,147,60,0.4)); }
+  50%       { filter: drop-shadow(0 0 12px rgba(201,147,60,0.7)); }
+}
+
+/* ─── Animation classes ──────────────────────────────────── */
+
+.animate-gold-shimmer {
+  background: linear-gradient(90deg, #C9933C 0%, #F0C060 25%, #C9933C 50%, #F0C060 75%, #C9933C 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gold-shimmer 3.5s linear infinite;
+}
+
+.animate-pulse-gold  { animation: pulse-gold    2.5s ease-in-out infinite; }
+.animate-pulse-red   { animation: pulse-crimson 2.5s ease-in-out infinite; }
+.animate-float       { animation: float-up      4s ease-in-out infinite; }
+.animate-ember       { animation: ember-flicker 5s ease-in-out infinite; }
+.animate-slide-up    { animation: slide-in-up   0.4s ease-out forwards; }
+.animate-glow-breath { animation: glow-breath   3s ease-in-out infinite; }
+
+/* ─── Surface & card utilities ───────────────────────────── */
+
+.forge-bg {
+  background: linear-gradient(180deg, #0A0705 0%, #0f0a06 100%);
+}
+
+.forge-card {
+  background: linear-gradient(135deg, #1E1208 0%, #150d06 100%);
+  border: 1px solid rgba(201,147,60,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.forge-card-hover {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.forge-card-hover:hover {
+  border-color: rgba(201,147,60,0.35);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 20px rgba(201,147,60,0.08), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.forge-header {
+  background: linear-gradient(180deg, #080503 0%, #120c07 100%);
+  border-bottom: 1px solid rgba(201,147,60,0.22);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+}
+
+/* ─── Text effects ───────────────────────────────────────── */
+
+.gold-text {
+  color: #C9933C;
+  text-shadow: 0 0 20px rgba(201,147,60,0.35);
+}
+
+.parchment-text {
+  color: #F2E4C4;
+}
+
+.embossed {
+  text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 0 rgba(0,0,0,0.6);
+}
+
+/* ─── Border & glow utilities ────────────────────────────── */
+
+.gold-border {
+  border: 1px solid rgba(201,147,60,0.3);
+}
+
+.gold-glow {
+  box-shadow: 0 0 20px rgba(201,147,60,0.2), inset 0 0 15px rgba(201,147,60,0.05);
+}
+
+.crimson-glow {
+  box-shadow: 0 0 20px rgba(139,26,26,0.4), inset 0 0 12px rgba(139,26,26,0.1);
+}
+
+.rune-glow {
+  filter: drop-shadow(0 0 6px rgba(201,147,60,0.55));
+}
+
+.fire-glow {
+  filter: drop-shadow(0 0 8px rgba(220,80,20,0.65));
+}
+
+/* ─── Corner ornament (pure CSS) ─────────────────────────── */
+
+.corner-ornament {
+  position: relative;
+}
+.corner-ornament::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 18px; height: 18px;
+  border-top: 1px solid rgba(201,147,60,0.5);
+  border-left: 1px solid rgba(201,147,60,0.5);
+  border-radius: 2px 0 0 0;
+  pointer-events: none;
+}
+.corner-ornament::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 18px; height: 18px;
+  border-bottom: 1px solid rgba(201,147,60,0.5);
+  border-right: 1px solid rgba(201,147,60,0.5);
+  border-radius: 0 0 2px 0;
+  pointer-events: none;
+}
+
+/* ─── Ornate section title brackets ─────────────────────── */
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.section-title::before { content: '⟨'; color: rgba(201,147,60,0.55); }
+.section-title::after  { content: '⟩'; color: rgba(201,147,60,0.55); }
+
+/* ─── Horizontal divider ─────────────────────────────────── */
+
+.ornate-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(201,147,60,0.45);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.ornate-divider::before,
+.ornate-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,147,60,0.35), transparent);
+}
+
+/* ─── Ribbon banners ─────────────────────────────────────── */
+
+.victory-ribbon {
+  background: linear-gradient(90deg, transparent 0%, rgba(34,85,34,0.9) 12%, rgba(34,85,34,0.9) 88%, transparent 100%);
+  border-top: 1px solid rgba(74,160,64,0.45);
+  border-bottom: 1px solid rgba(74,160,64,0.45);
+}
+
+.defeat-ribbon {
+  background: linear-gradient(90deg, transparent 0%, rgba(110,20,20,0.9) 12%, rgba(110,20,20,0.9) 88%, transparent 100%);
+  border-top: 1px solid rgba(197,48,48,0.45);
+  border-bottom: 1px solid rgba(197,48,48,0.45);
+}
+
+/* ─── Wooden board texture ───────────────────────────────── */
+
+.wooden-board {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.018) 0px,
+      rgba(255,255,255,0.018) 1px,
+      transparent 1px,
+      transparent 48px
+    ),
+    linear-gradient(180deg, #2a1a0c 0%, #1c1009 50%, #2a1a0c 100%);
+}
+
+/* ─── Dark parchment note ────────────────────────────────── */
+
+.note-paper {
+  background: linear-gradient(135deg, #e8d5a3 0%, #d4bc85 60%, #e0ca95 100%);
+  box-shadow: 4px 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+/* ─── Nav glow active ────────────────────────────────────── */
+
+.nav-active {
+  background: rgba(201,147,60,0.14);
+  box-shadow: 0 0 18px rgba(201,147,60,0.2), inset 0 0 8px rgba(201,147,60,0.06);
+}
+
+/* ─── Progress bar ───────────────────────────────────────── */
+
+.xp-bar {
+  background: rgba(201,147,60,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.xp-bar-fill {
+  background: linear-gradient(90deg, #8B6914, #C9933C, #F0C060);
+  box-shadow: 0 0 10px rgba(201,147,60,0.4);
+  border-radius: 999px;
+  height: 100%;
+}
+
+/* ─── Legacy light-theme classes (kept for compat) ───────── */
+
 .torn-edge {
   clip-path: polygon(0% 0%, 5% 2%, 10% 0%, 15% 3%, 20% 0%, 25% 2%, 30% 0%, 35% 3%, 40% 0%, 45% 2%, 50% 0%, 55% 3%, 60% 0%, 65% 2%, 70% 0%, 75% 3%, 80% 0%, 85% 2%, 90% 0%, 95% 3%, 100% 0%, 100% 100%, 95% 98%, 90% 100%, 85% 97%, 80% 100%, 75% 98%, 70% 100%, 65% 97%, 60% 100%, 55% 98%, 50% 100%, 45% 97%, 40% 100%, 35% 98%, 30% 100%, 25% 97%, 20% 100%, 15% 98%, 10% 100%, 5% 97%, 0% 100%);
 }
 
-.wood-texture {
-  background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
-  background-size: 4px 100%, 100% 4px;
-}
-
-.parchment-gradient {
-  background: radial-gradient(circle at 50% 50%, #fff8f5 0%, #ffeade 100%);
-}
-
-.wood-grain {
-    background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px);
-}
-
-.parchment-texture {
-    background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
-}
-
-.stone-texture {
-    background-image: radial-gradient(circle at 2px 2px, rgba(0,0,0,0.15) 1px, transparent 0);
-    background-size: 4px 4px;
-}
-
-.iron-border {
-    border-image: linear-gradient(to bottom, #2c1a0c, #492811, #1a0f06) 1;
-}
-
 .rivet {
-    width: 8px;
-    height: 8px;
-    background: linear-gradient(135deg, #737969, #301401);
-    border-radius: 50%;
-    box-shadow: inset -1px -1px 2px rgba(0,0,0,0.8), 1px 1px 2px rgba(255,255,255,0.2);
-}
-
-.wood-gradient {
-    background: linear-gradient(135deg, #492811 0%, #301401 100%);
-}
-
-.parchment-grain {
-    background-image: radial-gradient(circle at 2px 2px, rgba(73, 40, 17, 0.05) 1px, transparent 0);
-    background-size: 24px 24px;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 35% 35%, #9a9a8a, #2a2a1e);
+  border-radius: 50%;
+  box-shadow: inset -1px -1px 3px rgba(0,0,0,0.9), 1px 1px 2px rgba(255,255,255,0.15);
 }

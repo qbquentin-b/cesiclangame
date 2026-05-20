@@ -1,113 +1,411 @@
-import React from 'react';
+import React, { useState } from 'react';
 import GameLayout from '@/Layouts/GameLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 
-export default function GamesView() {
+const G = {
+    gold:    '#C9933C',
+    goldBrt: '#F0C060',
+    parch:   '#F2E4C4',
+    parchDm: 'rgba(242,228,196,0.45)',
+    forge:   '#0A0705',
+    card:    '#1E1208',
+    cardLt:  '#291A0C',
+    crimson: '#8B1A1A',
+    crimBrt: '#C53030',
+    forBrt:  '#4A9040',
+    border:  'rgba(201,147,60,0.18)',
+    borderA: 'rgba(201,147,60,0.35)',
+};
+
+// ── Shared helpers ────────────────────────────────────────────────────────────
+
+function SectionCard({ children, style = {} }) {
     return (
-        <GameLayout activeTab="games">
+        <div className="corner-ornament forge-card rounded-xl p-5 relative"
+             style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)', ...style }}>
+            {children}
+        </div>
+    );
+}
+
+function SectionTitle({ icon, title, badge }) {
+    return (
+        <div className="flex items-center gap-3 mb-4">
+            <span className="material-symbols-outlined text-2xl" style={{ color: G.gold, fontVariationSettings: "'FILL' 1" }}>
+                {icon}
+            </span>
+            <h3 className="font-headline text-xl font-black" style={{ color: G.parch }}>{title}</h3>
+            {badge && (
+                <span className="ml-auto font-label text-[9px] font-black uppercase px-2 py-0.5 rounded"
+                      style={{ background: `${badge.color}22`, border: `1px solid ${badge.color}44`, color: badge.color }}>
+                    {badge.label}
+                </span>
+            )}
+        </div>
+    );
+}
+
+// ── Quiz Royal ────────────────────────────────────────────────────────────────
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function QuizSection({ quizzes = [] }) {
+    const [state, setState]         = useState('select'); // select | loading | playing | done
+    const [activeQuiz, setActive]   = useState(null);     // quiz metadata
+    const [questions, setQs]        = useState([]);
+    const [current, setCurrent]     = useState(0);
+    const [score, setScore]         = useState(0);
+    const [choices, setChoices]     = useState([]);
+    const [selected, setSelected]   = useState(null);
+    const [error, setError]         = useState('');
+    const [submitted, setSubmitted] = useState(false);
+
+    const startQuiz = async (quiz) => {
+        setState('loading');
+        setError('');
+        try {
+            const res  = await fetch(route('games.quiz.questions', quiz.id));
+            const data = await res.json();
+            if (!data.questions?.length) throw new Error('Aucune question trouvée dans ce quiz.');
+            const parsed = data.questions.map(q => ({
+                ...q,
+                answers: shuffle(q.answers),
+            }));
+            setActive({ ...quiz, reward_per_correct: data.reward_per_correct });
+            setQs(parsed);
+            setChoices(parsed[0].answers);
+            setCurrent(0);
+            setScore(0);
+            setSelected(null);
+            setSubmitted(false);
+            setState('playing');
+        } catch (e) {
+            setError(e.message || 'Impossible de charger ce quiz.');
+            setState('select');
+        }
+    };
+
+    const pick = (answer) => {
+        if (selected !== null) return;
+        setSelected(answer);
+        if (answer === questions[current].correct) setScore(s => s + 1);
+    };
+
+    const next = () => {
+        const nextIdx = current + 1;
+        if (nextIdx >= questions.length) {
+            setState('done');
+        } else {
+            setCurrent(nextIdx);
+            setChoices(questions[nextIdx].answers);
+            setSelected(null);
+        }
+    };
+
+    const claimReward = () => {
+        if (submitted) return;
+        setSubmitted(true);
+        router.post(route('games.quiz.complete'), {
+            correct:            score,
+            reward_per_correct: activeQuiz.reward_per_correct,
+            total:              questions.length,
+        }, { preserveScroll: true });
+    };
+
+    const reward = score * (activeQuiz?.reward_per_correct ?? 10);
+    const total  = questions.length;
+
+    // ── Select screen ──
+    if (state === 'select' || state === 'loading') return (
+        <SectionCard>
+            <SectionTitle icon="quiz" title="Quiz Royal" badge={{ label: 'Cristaux', color: G.gold }} />
+            {quizzes.length === 0 ? (
+                <p className="font-label text-xs italic text-center py-6" style={{ color: G.parchDm }}>
+                    Aucun quiz disponible. L'admin peut en créer depuis le panneau admin.
+                </p>
+            ) : (
+                <div className="space-y-2">
+                    {error && <p className="text-xs text-red-400 font-label mb-2">⚠️ {error}</p>}
+                    {quizzes.map(q => (
+                        <button key={q.id} onClick={() => startQuiz(q)}
+                                disabled={state === 'loading'}
+                                className="w-full text-left px-4 py-3 rounded-xl transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 flex items-center justify-between gap-3"
+                                style={{ background: 'rgba(201,147,60,0.06)', border: `1px solid ${G.border}` }}>
+                            <div>
+                                <div className="font-headline font-bold text-sm" style={{ color: G.parch }}>{q.title}</div>
+                                <div className="font-label text-[10px] mt-0.5" style={{ color: G.parchDm }}>
+                                    {q.reward_per_correct} 💎 par bonne réponse
+                                </div>
+                            </div>
+                            <span className="material-symbols-outlined text-xl shrink-0" style={{ color: G.gold }}>
+                                {state === 'loading' ? 'hourglass_empty' : 'play_arrow'}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            )}
+        </SectionCard>
+    );
+
+    // ── Result screen ──
+    if (state === 'done') return (
+        <SectionCard>
+            <SectionTitle icon="quiz" title={activeQuiz.title} />
+            <div className="text-center py-4">
+                <div className="text-5xl mb-2">{score >= total * 0.8 ? '🏆' : score >= total * 0.5 ? '⚔️' : '🪨'}</div>
+                <div className="font-headline text-3xl font-black" style={{ color: G.gold }}>{score}/{total}</div>
+                <div className="font-label text-xs uppercase tracking-widest mt-1" style={{ color: G.parchDm }}>bonnes réponses</div>
+                <div className="mt-4 font-headline text-lg font-black" style={{ color: G.goldBrt }}>+{reward} 💎</div>
+            </div>
+            <button onClick={claimReward} disabled={submitted}
+                    className="w-full py-2.5 font-label text-xs font-black uppercase tracking-wider rounded-lg transition-all active:scale-95 hover:brightness-125 disabled:opacity-40 mt-2"
+                    style={{ background: G.gold, color: G.forge }}>
+                {submitted ? 'Récompense réclamée ✓' : `Réclamer ${reward} 💎`}
+            </button>
+            <button onClick={() => setState('select')}
+                    className="w-full py-2 mt-2 font-label text-xs font-black uppercase tracking-wider rounded-lg transition-all hover:brightness-125"
+                    style={{ background: 'rgba(255,255,255,0.05)', color: G.parchDm }}>
+                ← Choisir un autre quiz
+            </button>
+        </SectionCard>
+    );
+
+    // ── Playing screen ──
+    const q = questions[current];
+    return (
+        <SectionCard>
+            <div className="flex items-center justify-between mb-1">
+                <span className="font-headline font-bold text-sm truncate" style={{ color: G.parch }}>{activeQuiz.title}</span>
+                <span className="font-label text-xs font-bold shrink-0 ml-2" style={{ color: G.parchDm }}>{current + 1}/{total}</span>
+            </div>
+            <div className="h-1 rounded-full mb-4 overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                <div className="h-full rounded-full transition-all" style={{ width: `${((current + 1) / total) * 100}%`, background: G.gold }} />
+            </div>
+            <p className="font-headline font-bold text-sm mb-4 leading-relaxed" style={{ color: G.parch }}>
+                {q.question}
+            </p>
+            <div className="grid grid-cols-1 gap-2">
+                {choices.map((ans) => {
+                    const isCorrect  = ans === q.correct;
+                    const isSelected = ans === selected;
+                    let bg = 'rgba(255,255,255,0.04)', border = G.border, color = G.parch;
+                    if (selected !== null) {
+                        if (isCorrect)       { bg = 'rgba(74,160,64,0.2)';  border = 'rgba(74,160,64,0.6)';  color = '#a0e090'; }
+                        else if (isSelected) { bg = 'rgba(197,48,48,0.2)';  border = 'rgba(197,48,48,0.6)';  color = '#ffaaaa'; }
+                    }
+                    return (
+                        <button key={ans} onClick={() => pick(ans)}
+                                className="text-left px-4 py-2.5 rounded-lg font-label text-xs font-bold transition-all hover:brightness-110"
+                                style={{ background: bg, border: `1px solid ${border}`, color }}>
+                            {ans}
+                        </button>
+                    );
+                })}
+            </div>
+            {selected !== null && (
+                <button onClick={next}
+                        className="w-full py-2.5 mt-4 font-label text-xs font-black uppercase tracking-wider rounded-lg transition-all active:scale-95 hover:brightness-125"
+                        style={{ background: G.gold, color: G.forge }}>
+                    {current + 1 < total ? 'Suivant →' : 'Voir résultat'}
+                </button>
+            )}
+        </SectionCard>
+    );
+}
+
+// ── Paris d'Honneur ───────────────────────────────────────────────────────────
+
+function BettingSection({ events, userBets }) {
+    const [amounts, setAmounts]     = useState({});
+    const [predictions, setPreds]   = useState({});
+    const alreadyBet = new Set(userBets);
+
+    const handleBet = (eventId) => {
+        const amount = parseInt(amounts[eventId] || 0);
+        const prediction = predictions[eventId] || '';
+        if (!amount || !prediction) return;
+        router.post(route('games.bet'), { event_id: eventId, amount, prediction }, { preserveScroll: true });
+    };
+
+    return (
+        <SectionCard>
+            <SectionTitle icon="scale" title="Paris d'Honneur" badge={{ label: 'Cristaux', color: G.forBrt }} />
+
+            {events.length === 0 ? (
+                <p className="font-label text-xs italic text-center py-6" style={{ color: G.parchDm }}>
+                    Aucun événement de pari ouvert pour l'instant.
+                </p>
+            ) : events.map(ev => {
+                const bet = alreadyBet.has(ev.id);
+                const options = ev.options ?? [];
+                return (
+                    <div key={ev.id} className="mb-5 last:mb-0 rounded-xl p-4"
+                         style={{ background: 'rgba(0,0,0,0.2)', border: `1px solid ${G.border}` }}>
+                        <p className="font-headline font-bold text-sm mb-3" style={{ color: G.parch }}>{ev.title}</p>
+
+                        {bet ? (
+                            <div className="text-center py-3">
+                                <span className="font-label text-xs font-bold uppercase" style={{ color: G.forBrt }}>
+                                    ✓ Pari enregistré
+                                </span>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    {options.map(opt => (
+                                        <button key={opt} onClick={() => setPreds(p => ({ ...p, [ev.id]: opt }))}
+                                                className="px-3 py-1.5 rounded-lg font-label text-xs font-bold transition-all"
+                                                style={{
+                                                    background: predictions[ev.id] === opt ? `${G.gold}22` : 'rgba(255,255,255,0.04)',
+                                                    border: `1px solid ${predictions[ev.id] === opt ? G.gold : G.border}`,
+                                                    color: predictions[ev.id] === opt ? G.gold : G.parchDm,
+                                                }}>
+                                            {opt}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="flex gap-2">
+                                    <input type="number" min="1" placeholder="Mise 💎"
+                                           value={amounts[ev.id] || ''}
+                                           onChange={e => setAmounts(a => ({ ...a, [ev.id]: e.target.value }))}
+                                           className="flex-1 px-3 py-2 rounded-lg text-xs font-bold outline-none"
+                                           style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${G.border}`, color: G.parch }} />
+                                    <button onClick={() => handleBet(ev.id)}
+                                            disabled={!predictions[ev.id] || !amounts[ev.id]}
+                                            className="px-4 py-2 rounded-lg font-label text-xs font-black uppercase tracking-wide transition-all hover:brightness-125 disabled:opacity-40"
+                                            style={{ background: G.gold, color: G.forge }}>
+                                        Miser
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                );
+            })}
+        </SectionCard>
+    );
+}
+
+// ── Missions de Clan ──────────────────────────────────────────────────────────
+
+function MissionsSection({ missions }) {
+    const [proofs, setProofs] = useState({});
+
+    const handleSubmit = (missionId) => {
+        const proof = proofs[missionId] || '';
+        if (!proof) return;
+        router.post(route('games.missions.submit', missionId), { proof_url: proof }, { preserveScroll: true });
+    };
+
+    if (!missions || missions.length === 0) return (
+        <SectionCard>
+            <SectionTitle icon="swords" title="Missions de Clan" />
+            <p className="font-label text-xs italic text-center py-6" style={{ color: G.parchDm }}>
+                Aucune mission active pour votre clan.
+            </p>
+        </SectionCard>
+    );
+
+    return (
+        <SectionCard style={{ gridColumn: '1 / -1' }}>
+            <SectionTitle icon="swords" title="Missions de Clan" />
+            <div className="space-y-4">
+                {missions.map(m => {
+                    const submitted = m.status === 'submitted';
+                    return (
+                        <div key={m.id} className="rounded-xl p-4"
+                             style={{ background: 'rgba(0,0,0,0.2)', border: `1px solid ${G.border}` }}>
+                            <div className="flex items-start justify-between gap-3 mb-2">
+                                <div>
+                                    <p className="font-headline font-bold text-sm" style={{ color: G.parch }}>{m.title}</p>
+                                    {m.description && (
+                                        <p className="font-label text-[10px] mt-0.5 italic" style={{ color: G.parchDm }}>{m.description}</p>
+                                    )}
+                                </div>
+                                <span className="font-label text-[10px] font-black shrink-0" style={{ color: G.gold }}>
+                                    +{m.reward_crystals} 💎
+                                </span>
+                            </div>
+
+                            {submitted ? (
+                                <div className="text-xs font-label font-bold uppercase py-2 text-center rounded-lg"
+                                     style={{ background: 'rgba(201,147,60,0.08)', color: G.gold }}>
+                                    ⏳ En attente de validation
+                                </div>
+                            ) : (
+                                <div className="flex gap-2 mt-3">
+                                    <input type="url" placeholder="URL de la preuve (https://…)"
+                                           value={proofs[m.id] || ''}
+                                           onChange={e => setProofs(p => ({ ...p, [m.id]: e.target.value }))}
+                                           className="flex-1 px-3 py-2 rounded-lg text-xs outline-none font-label"
+                                           style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${G.border}`, color: G.parch }} />
+                                    <button onClick={() => handleSubmit(m.id)}
+                                            disabled={!proofs[m.id]}
+                                            className="px-4 py-2 rounded-lg font-label text-xs font-black uppercase tracking-wide transition-all hover:brightness-125 disabled:opacity-40"
+                                            style={{ background: G.gold, color: G.forge }}>
+                                        Soumettre
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        </SectionCard>
+    );
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+
+export default function GamesView({ bettingEvents = [], userBets = [], clanMissions = [], activeQuizzes = [] }) {
+    const flash  = usePage().props.flash  || {};
+    const errors = usePage().props.errors || {};
+
+    return (
+        <GameLayout activeTab="jeux">
             <Head title="Taverne des Jeux" />
 
-            <div className="mb-8 text-center">
-                <h2 className="font-headline text-3xl font-bold text-secondary-fixed leading-tight drop-shadow-md">Taverne des Jeux</h2>
-                <div className="inline-block px-4 py-1 mt-2 bg-secondary/20 rounded-full">
-                    <p className="font-label text-xs font-bold text-secondary-fixed-dim uppercase tracking-widest">Défiez le destin, forgez votre gloire</p>
+            {/* Flash messages */}
+            {(flash.message || flash.quizReward !== undefined) && (
+                <div className="mb-4 px-4 py-3 bg-green-800/80 border border-green-500 rounded-xl text-green-200 text-sm font-label">
+                    {flash.quizReward !== undefined
+                        ? `✅ Quiz terminé ! +${flash.quizReward} 💎 ajoutés à votre compte.`
+                        : `✅ ${flash.message}`}
                 </div>
+            )}
+            {errors.message && (
+                <div className="mb-4 px-4 py-3 bg-red-900/80 border border-red-500 rounded-xl text-red-200 text-sm font-label">
+                    ⚠️ {errors.message}
+                </div>
+            )}
+
+            {/* Header */}
+            <div className="text-center py-2 mb-6">
+                <div className="ornate-divider mb-3" style={{ fontSize: '9px' }}>Taverne des Jeux</div>
+                <h2 className="font-headline text-3xl font-black leading-tight"
+                    style={{ color: G.parch, textShadow: '0 2px 16px rgba(0,0,0,0.6)' }}>
+                    Défiez le Destin
+                </h2>
+                <p className="font-label text-[10px] uppercase tracking-[0.15em] mt-2" style={{ color: `${G.gold}88` }}>
+                    Forgez votre gloire
+                </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                {/* Card 1: Quiz */}
-                <div className="bg-surface-container-high rounded-lg p-5 flex flex-col relative shadow-[inset_-2px_-4px_8px_rgba(0,0,0,0.1),4px_8px_16px_rgba(0,0,0,0.3)] transform -rotate-1 border-b-2 border-r-2 border-black/10">
-                    <div className="absolute -top-2 -right-1 bg-tertiary text-on-tertiary font-bold text-[10px] px-2 py-0.5 rounded shadow-sm z-10 font-label">LIVE</div>
-                    <div className="flex justify-center mb-4">
-                        <div className="w-14 h-14 bg-surface-dim rounded-full flex items-center justify-center shadow-inner">
-                            <span className="material-symbols-outlined text-4xl text-on-surface-variant">hourglass</span>
-                        </div>
-                    </div>
-                    <h3 className="font-headline text-xl font-bold text-on-surface text-center mb-2">Quiz Royal</h3>
-                    <div className="flex justify-center gap-1 mt-auto">
-                        <div className="flex items-center gap-1 bg-surface/50 rounded px-2 py-1">
-                            <span className="material-symbols-outlined text-sm text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
-                            <span className="text-xs font-bold font-label">500</span>
-                        </div>
-                    </div>
-                    <button className="mt-4 py-2 bg-primary text-secondary-fixed font-bold rounded-lg shadow-md hover:brightness-110 active:scale-95 transition-all text-sm font-label">JOUER</button>
-                </div>
-
-                {/* Card 2: Paris/Bets */}
-                <div className="bg-surface-container-high rounded-lg p-5 flex flex-col relative shadow-[inset_-2px_-4px_8px_rgba(0,0,0,0.1),4px_8px_16px_rgba(0,0,0,0.3)] transform rotate-2 border-b-2 border-r-2 border-black/10">
-                    <div className="absolute -top-2 -right-1 bg-primary text-on-primary font-bold text-[10px] px-2 py-0.5 rounded shadow-sm z-10 font-label">NEW</div>
-                    <div className="flex justify-center mb-4">
-                        <div className="w-14 h-14 bg-surface-dim rounded-full flex items-center justify-center shadow-inner">
-                            <span className="material-symbols-outlined text-4xl text-on-surface-variant">scale</span>
-                        </div>
-                    </div>
-                    <h3 className="font-headline text-xl font-bold text-on-surface text-center mb-2">Paris d'Honneur</h3>
-                    <div className="flex justify-center gap-1 mt-auto">
-                        <div className="flex items-center gap-1 bg-surface/50 rounded px-2 py-1">
-                            <span className="material-symbols-outlined text-sm text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
-                            <span className="text-xs font-bold font-label">25</span>
-                        </div>
-                    </div>
-                    <button className="mt-4 py-2 bg-primary text-secondary-fixed font-bold rounded-lg shadow-md hover:brightness-110 active:scale-95 transition-all text-sm font-label">MISER</button>
-                </div>
-
-                {/* Card 3: Mission collective */}
-                <div className="col-span-2 bg-surface-container rounded-lg p-6 flex items-center gap-4 relative shadow-[inset_-2px_-4px_8px_rgba(0,0,0,0.1),4px_8px_16px_rgba(0,0,0,0.4)] border-b-2 border-r-2 border-black/10">
-                    <div className="w-20 h-20 bg-surface-dim rounded-xl flex items-center justify-center shadow-inner shrink-0 overflow-hidden">
-                        <span className="material-symbols-outlined text-5xl text-on-surface-variant">swords</span>
-                    </div>
-                    <div className="flex-1">
-                        <div className="flex justify-between items-start mb-1">
-                            <h3 className="font-headline text-2xl font-bold text-on-surface">Mission de Clan</h3>
-                            <span className="text-[10px] font-bold font-label bg-secondary/20 text-on-secondary-container px-2 py-0.5 rounded">65% COMPLET</span>
-                        </div>
-                        <p className="text-xs text-on-surface-variant mb-3 font-label">Terrassez l'hydre du Nord ensemble.</p>
-                        <div className="w-full h-3 bg-inverse-surface rounded-full overflow-hidden mb-3">
-                            <div className="h-full bg-gradient-to-r from-tertiary to-tertiary-container w-2/3 shadow-[0_0_8px_rgba(173,43,31,0.5)]"></div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <div className="flex -space-x-2">
-                                {[1, 2, 3].map((i) => (
-                                    <div key={i} className="w-6 h-6 rounded-full border border-surface bg-gray-300 overflow-hidden">
-                                        <img alt="Member" src={`https://lh3.googleusercontent.com/aida-public/AB6AXuBWtmKem5oKyhladxk3HLyCLhZlOqHoOEUsPkVNywWgA9uYkoHe_P4J6eSKepAP7JvaZBIHwiCDVxDk2QaAN2XDD13ee1isy0P0Sc0wyevdHkrS9NkzofG2QBkwGZg9HbSRynZilObmT1swMNb6OEh2S7dYY3JXot-q6BSS8HP8IokolI0n4Ce3Rr7QA2ydnYJwYd7FYyQjRTvcoqoxb7Dqh0LD1YEubru-wo6mOAeYvbgv6Efs6YlWZVMz3ONr5L9nhUrmhCXvd0Q`} />
-                                    </div>
-                                ))}
-                                <div className="w-6 h-6 rounded-full bg-surface-dim border border-surface flex items-center justify-center text-[8px] font-bold text-on-surface">+12</div>
-                            </div>
-                            <button className="px-4 py-1.5 bg-primary text-secondary-fixed font-bold rounded-lg shadow-md hover:brightness-110 active:scale-95 transition-all text-xs font-label uppercase">Rejoindre</button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Card 4: Événement flash */}
-                <div className="col-span-2 bg-surface rounded-lg p-5 flex flex-col relative shadow-[inset_-2px_-4px_8px_rgba(0,0,0,0.1),4px_8px_16px_rgba(0,0,0,0.3)] border-b-2 border-r-2 border-black/10 overflow-hidden">
-                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-tertiary/10 rounded-full blur-2xl"></div>
-                    <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-surface-container-highest rounded-full flex items-center justify-center shadow-inner relative z-10 shrink-0">
-                            <span className="material-symbols-outlined text-4xl text-tertiary" style={{ fontVariationSettings: "'FILL' 1" }}>electric_bolt</span>
-                        </div>
-                        <div>
-                            <h3 className="font-headline text-xl font-bold text-on-surface">Foudre d'Or</h3>
-                            <p className="text-xs text-on-surface-variant font-label">Fin dans <span className="text-tertiary font-bold">04:52</span></p>
-                        </div>
-                        <div className="ml-auto flex flex-col items-center">
-                            <div className="flex items-center gap-1 bg-secondary-container/30 px-2 py-1 rounded">
-                                <span className="material-symbols-outlined text-sm text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
-                                <span className="text-sm font-black font-label text-secondary">x2</span>
-                            </div>
-                            <span className="text-[8px] font-bold uppercase mt-1 opacity-60">Bonus</span>
-                        </div>
-                    </div>
-                    <button className="mt-4 w-full py-3 bg-inverse-surface text-on-primary-container font-bold rounded-xl shadow-lg hover:brightness-125 active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-[#765a19]/30">
-                        <span className="material-symbols-outlined text-xl">bolt</span>
-                        <span className="font-label">PARTICIPER MAINTENANT</span>
-                    </button>
-                </div>
+            <div className="grid grid-cols-2 gap-4">
+                <QuizSection quizzes={activeQuizzes} />
+                <BettingSection events={bettingEvents} userBets={userBets} />
+                <MissionsSection missions={clanMissions} />
             </div>
 
-            {/* Decorative Tavern Element */}
-            <div className="mt-12 opacity-40 text-center">
-                <span className="material-symbols-outlined text-6xl text-[#765a19]/50">sports_martial_arts</span>
+            <div className="text-center py-4 opacity-25">
+                <span className="material-symbols-outlined text-5xl" style={{ color: G.gold }}>casino</span>
             </div>
         </GameLayout>
     );

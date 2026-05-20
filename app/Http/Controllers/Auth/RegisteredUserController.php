@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Chest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -39,13 +40,22 @@ class RegisteredUserController extends Controller
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'crystals' => 0,
-            'level' => 1,
+            'level'    => 1,
+        ]);
+
+        Chest::create([
+            'user_id'     => $user->id,
+            'chest_type'  => 'rare',
+            'status'      => 'unopened',
+            'source'      => 'welcome',
+            'obtained_at' => now(),
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard', absolute: false))
+            ->with('message', "Bienvenue, {$user->username} ! Un Coffre Rare t'attend dans ton inventaire. 🎁");
     }
 }

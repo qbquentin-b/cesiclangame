@@ -1,144 +1,337 @@
 import React from 'react';
 import GameLayout from '@/Layouts/GameLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
-export default function WarView() {
+const G = {
+    gold:    '#C9933C',
+    goldBrt: '#F0C060',
+    parch:   '#F2E4C4',
+    parchDm: 'rgba(242,228,196,0.45)',
+    forge:   '#0A0705',
+    card:    '#1E1208',
+    cardLt:  '#291A0C',
+    crimson: '#8B1A1A',
+    crimBrt: '#C53030',
+    forBrt:  '#4A9040',
+    border:  'rgba(201,147,60,0.18)',
+};
+
+function ClanBanner({ side, clan, label }) {
+    const color = side === 'left' ? G.gold : G.crimBrt;
+    const name  = clan?.name ?? '—';
+    const power = clan?.power_score ?? 0;
+
     return (
-        <GameLayout activeTab="wars">
-            <Head title="Guerre Screen" />
+        <div className="flex flex-col items-center gap-3">
+            <div
+                className="relative rounded-t-2xl overflow-hidden flex flex-col items-center justify-center text-center px-3 py-4"
+                style={{
+                    width: 128, height: 170,
+                    background: `linear-gradient(180deg, ${color}33 0%, ${color}18 100%)`,
+                    border: `1px solid ${color}55`,
+                    boxShadow: `0 8px 32px rgba(0,0,0,0.6), 0 0 20px ${color}22`,
+                }}
+            >
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(10,7,5,0.1) 0%, rgba(10,7,5,0.6) 100%)' }} />
 
-            {/* War Header: Banners & VS */}
-            <section className="relative grid grid-cols-2 gap-4 items-center pt-8">
-                {/* Left Clan Banner */}
-                <div className="flex flex-col items-center gap-4">
-                    <div className="relative w-32 h-44 wood-gradient p-2 rounded-t-lg shadow-xl flex flex-col items-center justify-center text-center overflow-hidden">
-                        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBUD1KBVUFoB7wEn18UkFjuxdn20Vne8iGhV8rj41NcEFv_Wkj20tvGdh9iofThW7fiGz1z58CBxzO2zx2gtaDJ3-tu8UNa-LqeUXJyxDZCl1IMGaxqbd02MvNJ4uj-55aQ84EoMn3OfcZxgIYCglEtYkytkHGnv25EQpXIYODfxmG26Cxn3PhV0U0SC_R2fdUJmBIwWOR_sWwRqWq70OHYg2ELQSm_wNXZ3Gf-7zQHsE00Jw7EKpqsRSwfedCX7Qcg41Dr9Aa9pww')" }}></div>
-                        <img alt="Your Clan" className="w-20 h-20 mb-2 drop-shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZwxWcGVY_RH3AFU1iVl9vDpNi3ev0ogIr-Pi_ZWVy3fSqNscyowbvbWArXs8I5uGamWin4QYtMu9plZOey_7dFdwAMFvK_LvqoVbc2rWNVyBp8GRD1S5EKxt07xlGtq8JuVbdIclQCYRfj5c_tmuUU0YA5WznINvnidh-6SS1NK6VZ9EXNmpY6ifWYneQYN0XzGlJB3ScVReyNaYbNMzTaT3c3zt7KccNZL0sKQsYx5VHbHSKdn5pNdZhPeVXzDMZ_xHvzZLIabo"/>
-                        <span className="font-headline text-secondary-fixed text-sm uppercase font-bold">Iron Wolves</span>
-                        <div className="mt-2 bg-primary px-3 py-0.5 rounded-full text-[10px] text-on-primary font-bold">LVL 42</div>
+                {clan?.crest_url ? (
+                    <img src={clan.crest_url} alt={name}
+                         className="w-16 h-16 mb-2 relative z-10 object-contain"
+                         style={{ filter: `drop-shadow(0 0 8px ${color}55)` }} />
+                ) : (
+                    <div className="w-16 h-16 mb-2 relative z-10 rounded-full flex items-center justify-center text-3xl font-black"
+                         style={{ background: `${color}22`, border: `2px solid ${color}55`, color }}>
+                        {name[0]?.toUpperCase() ?? '?'}
                     </div>
-                    <div className="text-center space-y-1">
-                        <div className="text-2xl font-headline font-black text-primary">1,450</div>
-                        <div className="flex items-center justify-center gap-1 text-xs font-bold text-outline uppercase tracking-tighter">
-                            <span className="material-symbols-outlined text-sm">swords</span>
-                            Power Score
-                        </div>
-                    </div>
+                )}
+
+                <span className="font-headline text-[11px] font-black uppercase relative z-10" style={{ color: G.parch }}>
+                    {name}
+                </span>
+                <div className="mt-2 px-2.5 py-0.5 rounded-full text-[9px] font-black relative z-10"
+                     style={{ background: `${color}22`, border: `1px solid ${color}44`, color }}>
+                    Nv.{clan?.level ?? 1}
                 </div>
 
-                {/* VS Emblem */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                    <div className="w-16 h-16 bg-inverse-surface rounded-full flex items-center justify-center border-4 border-secondary shadow-[0_0_20px_rgba(118,90,25,0.4)]">
-                        <span className="font-headline text-2xl font-black text-secondary-fixed italic">VS</span>
-                    </div>
+                <div className="absolute top-2 font-label text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded"
+                     style={{ [side === 'left' ? 'left' : 'right']: 6, background: 'rgba(0,0,0,0.5)', color, border: `1px solid ${color}33` }}>
+                    {label}
                 </div>
+            </div>
 
-                {/* Right Clan Banner */}
-                <div className="flex flex-col items-center gap-4">
-                    <div className="relative w-32 h-44 bg-tertiary p-2 rounded-t-lg shadow-xl flex flex-col items-center justify-center text-center overflow-hidden">
-                        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAAsmB83PXI98xLvmJQ95odWvnTCpe6ei1tPiAq3Djrl9zqtRUm0tVy1kLWGD9W8jBipT2fF6k3kaxVk8s3oOWQwijJ92UDSS11oam2OGZTwgJSOce5GWkYlgAue4kNFJiyf67l-lpN2UL0emRZ6duBRxw11WXY3vF7vqtrAizawfsE0H5MjTDBSFyqAMBICJrk6RdU9JOAFIsqckYXP1zM31xz37L6E2cMOWobvUF3etwAptL-VW3164KOS9uN79Dz0Dy76zehkys')" }}></div>
-                        <img alt="Enemy Clan" className="w-20 h-20 mb-2 drop-shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8yjfRCli17bNj9cxIMBNdVuWrezX5wIRHs4S8bYtuQLy9pFGwaks0s8Un8_9dpx1h01pGiB6nYNhOlQve30hz3ld40NIzfvLUN8OJITeFZ1mvz9EMMG3hG_4Hp4MqRvltg3ZQS9YNcgY7iO8vcdrFtmWHDi-Puf-LD1PTft7Ejb-s7XNM3tvN9Ia0Z3OPON35AlGh08QRelbvzUzEBRRWBzci-rs1hNDVeh4N8DRYhqOKF3LwoOIGfLWPASx5LFH_oqq2jfFL0oI"/>
-                        <span className="font-headline text-white text-sm uppercase font-bold">Blood Hawks</span>
-                        <div className="mt-2 bg-on-tertiary-fixed-variant px-3 py-0.5 rounded-full text-[10px] text-on-tertiary font-bold">LVL 39</div>
-                    </div>
-                    <div className="text-center space-y-1">
-                        <div className="text-2xl font-headline font-black text-tertiary">1,280</div>
-                        <div className="flex items-center justify-center gap-1 text-xs font-bold text-outline uppercase tracking-tighter">
-                            <span className="material-symbols-outlined text-sm">swords</span>
-                            Power Score
+            <div className="text-center">
+                <div className="font-headline text-2xl font-black" style={{ color, textShadow: `0 0 14px ${color}66` }}>
+                    {power.toLocaleString('fr-FR')}
+                </div>
+                <div className="flex items-center justify-center gap-1 font-label text-[9px] uppercase tracking-wider mt-0.5" style={{ color: G.parchDm }}>
+                    <span className="material-symbols-outlined text-[11px]">swords</span>
+                    Force
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function ActiveWar({ war, userClanId, warScores }) {
+    const isA          = war.clan_a_id === userClanId;
+    const myClan       = isA ? war.clan_a : war.clan_b;
+    const theyClan     = isA ? war.clan_b : war.clan_a;
+    const myScore      = isA ? war.score_a : war.score_b;
+    const theyScore    = isA ? war.score_b : war.score_a;
+    const myDeploy     = warScores ? (isA ? warScores.score_a : warScores.score_b) : null;
+    const theyDeploy   = warScores ? (isA ? warScores.score_b : warScores.score_a) : null;
+    const totalDeploy  = (myDeploy ?? 0) + (theyDeploy ?? 0);
+    const myPct        = totalDeploy > 0 ? Math.round((myDeploy / totalDeploy) * 100) : 50;
+
+    return (
+        <>
+            <section className="relative pt-6">
+                <div className="grid grid-cols-2 gap-2 items-end justify-items-center relative">
+                    <ClanBanner side="left"  clan={myClan}   label="VOUS" />
+                    <ClanBanner side="right" clan={theyClan} label="EUX"  />
+
+                    <div className="absolute left-1/2 top-[70px] -translate-x-1/2 z-20">
+                        <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center animate-pulse-gold"
+                             style={{
+                                 background: 'linear-gradient(135deg, #291A0C, #1E1208)',
+                                 border: `2px solid ${G.gold}`,
+                                 boxShadow: `0 0 24px rgba(201,147,60,0.4), inset 0 0 10px rgba(201,147,60,0.1)`,
+                             }}>
+                            <span className="font-headline text-xl font-black italic"
+                                  style={{ color: G.goldBrt, textShadow: '0 0 12px rgba(240,192,96,0.5)' }}>
+                                VS
+                            </span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Bonus Stats Section */}
-            <div className="grid grid-cols-2 gap-px bg-secondary/20 rounded-xl overflow-hidden shadow-inner border border-secondary/10">
-                <div className="bg-surface-container-low p-3 flex flex-col items-center border-r border-secondary/20">
-                    <span className="text-[10px] text-outline font-bold uppercase mb-1">Weapon Bonus</span>
-                    <span className="text-primary font-headline font-bold">+15% Iron</span>
-                </div>
-                <div className="bg-surface-container-low p-3 flex flex-col items-center">
-                    <span className="text-[10px] text-outline font-bold uppercase mb-1">Weapon Bonus</span>
-                    <span className="text-tertiary font-headline font-bold">+8% Steel</span>
-                </div>
-            </div>
-
-            {/* Victory Ribbon */}
-            <div className="relative py-4">
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1 bg-secondary/30"></div>
-                <div className="relative flex justify-center">
-                    <div className="bg-secondary-container border-y-4 border-secondary px-8 py-2 shadow-lg transform rotate-[-2deg]">
-                        <span className="font-headline text-3xl font-black text-on-secondary-container uppercase tracking-[0.2em] italic drop-shadow-sm">VICTOIRE</span>
-                        <div className="absolute -left-4 top-0 w-8 h-full bg-secondary-container transform -skew-x-12 border-l-4 border-secondary"></div>
-                        <div className="absolute -right-4 top-0 w-8 h-full bg-secondary-container transform skew-x-12 border-r-4 border-secondary"></div>
+            <section className="rounded-xl overflow-hidden mt-4"
+                     style={{ border: `1px solid ${G.border}`, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
+                <div className="grid grid-cols-2 divide-x divide-[rgba(201,147,60,0.12)]">
+                    <div className="p-4 flex flex-col items-center"
+                         style={{ background: 'linear-gradient(135deg, #1c1208 0%, #140d06 100%)' }}>
+                        <span className="font-label text-[9px] uppercase tracking-widest mb-1" style={{ color: G.parchDm }}>Score</span>
+                        <span className="font-headline font-black text-2xl" style={{ color: G.gold }}>{myScore}</span>
+                    </div>
+                    <div className="p-4 flex flex-col items-center"
+                         style={{ background: 'linear-gradient(135deg, #1c1208 0%, #140d06 100%)' }}>
+                        <span className="font-label text-[9px] uppercase tracking-widest mb-1" style={{ color: G.parchDm }}>Score</span>
+                        <span className="font-headline font-black text-2xl" style={{ color: G.crimBrt }}>{theyScore}</span>
                     </div>
                 </div>
+            </section>
+
+            <div className="rounded-xl p-3 mt-2 text-center font-label text-xs uppercase tracking-widest"
+                 style={{ background: 'rgba(201,147,60,0.06)', border: `1px solid ${G.border}`, color: G.parchDm }}>
+                Statut : <span className="font-bold" style={{ color: G.gold }}>{war.status === 'active' ? 'En cours' : 'En attente'}</span>
+                {war.scheduled_at && (
+                    <> · Planifiée le {new Date(war.scheduled_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</>
+                )}
             </div>
 
-            {/* Scroll: Past Wars History */}
-            <section className="space-y-4">
-                <div className="flex items-center justify-between px-2">
-                    <h2 className="font-headline text-xl font-bold text-on-background flex items-center gap-2">
-                        <span className="material-symbols-outlined text-secondary">scrollable_header</span>
-                        HISTORIQUE DES GUERRES
+            {/* Deployment power bar */}
+            {myDeploy !== null && (
+                <div className="rounded-xl overflow-hidden mt-3"
+                     style={{ border: `1px solid ${G.border}` }}>
+                    <div className="px-4 py-2 flex items-center justify-between"
+                         style={{ background: 'rgba(0,0,0,0.3)', borderBottom: `1px solid ${G.border}` }}>
+                        <span className="font-label text-[9px] uppercase tracking-widest" style={{ color: G.parchDm }}>Puissance déployée</span>
+                        <Link href="/troops"
+                              className="font-label text-[9px] uppercase tracking-wider"
+                              style={{ color: G.gold }}>
+                            Déployer →
+                        </Link>
+                    </div>
+                    <div className="p-3" style={{ background: 'linear-gradient(135deg, #1c1208, #140d06)' }}>
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="font-headline font-black text-[13px]" style={{ color: G.gold }}>{myDeploy.toLocaleString('fr-FR')} pts</span>
+                            <span className="font-headline font-black text-[13px]" style={{ color: G.crimBrt }}>{theyDeploy.toLocaleString('fr-FR')} pts</span>
+                        </div>
+                        <div className="h-3 rounded-full overflow-hidden" style={{ background: 'rgba(139,26,26,0.3)' }}>
+                            <div className="h-full rounded-full transition-all"
+                                 style={{
+                                     width: `${myPct}%`,
+                                     background: `linear-gradient(90deg, ${G.gold}, ${G.goldBrt})`,
+                                     boxShadow: `0 0 8px ${G.gold}55`,
+                                 }} />
+                        </div>
+                        <div className="flex justify-between mt-1">
+                            <span className="font-label text-[8px]" style={{ color: G.parchDm }}>{myClan?.name}</span>
+                            <span className="font-label text-[8px]" style={{ color: G.parchDm }}>{theyClan?.name}</span>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
+
+function NoWar() {
+    return (
+        <div className="flex flex-col items-center justify-center py-20 gap-4 opacity-60">
+            <span className="material-symbols-outlined text-6xl" style={{ color: G.gold }}>swords</span>
+            <p className="font-headline font-bold text-xl" style={{ color: G.parch }}>Pas de guerre en cours</p>
+            <p className="font-label text-[10px] uppercase tracking-widest text-center" style={{ color: G.parchDm }}>
+                Les guerres ont lieu le lundi et le jeudi.<br/>Votre chef peut aussi en déclencher une manuellement.
+            </p>
+        </div>
+    );
+}
+
+export default function WarView({ activeWar = null, warHistory = [], warScores = null, clanDeployments = [] }) {
+    const { auth } = usePage().props;
+    const userClanId = auth?.user?.clan_id;
+
+    const getResult = (war) => {
+        if (!war.winner_id) return null;
+        return war.winner_id === userClanId ? 'won' : 'lost';
+    };
+
+    const getOpponent = (war) => {
+        if (war.clan_a_id === userClanId) return war.clan_b?.name ?? '—';
+        return war.clan_a?.name ?? '—';
+    };
+
+    return (
+        <GameLayout activeTab="guerres">
+            <Head title="Guerre" />
+
+            {/* Header */}
+            <div className="mb-6 flex items-center justify-between">
+                <h2 className="font-headline text-3xl font-black flex items-center gap-3"
+                    style={{ color: G.parch, textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>
+                    <span className="material-symbols-outlined text-3xl"
+                          style={{ color: G.gold, filter: 'drop-shadow(0 0 8px rgba(201,147,60,0.5))' }}>
+                        swords
+                    </span>
+                    Guerres de Clans
+                </h2>
+                <Link href="/troops"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg font-headline font-black text-[11px] uppercase tracking-wider transition-all hover:brightness-110"
+                      style={{ background: 'rgba(201,147,60,0.08)', border: `1px solid ${G.border}`, color: G.gold }}>
+                    <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>shield_person</span>
+                    Mon Armée
+                </Link>
+            </div>
+
+            {/* Active war or empty state */}
+            {activeWar ? <ActiveWar war={activeWar} userClanId={userClanId} warScores={warScores} /> : <NoWar />}
+
+            {/* Clan deployments for active war */}
+            {activeWar && clanDeployments.length > 0 && (
+                <section className="mt-4">
+                    <div className="flex items-center justify-between mb-2 px-0.5">
+                        <h3 className="font-headline font-black text-[14px]" style={{ color: G.parch }}>
+                            Déploiements de votre clan
+                        </h3>
+                        <Link href={`/wars/${activeWar.id}`}
+                              className="font-label text-[9px] uppercase tracking-wider"
+                              style={{ color: G.gold }}>
+                            Détail complet →
+                        </Link>
+                    </div>
+                    <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${G.border}` }}>
+                        {clanDeployments.map((dep, idx) => (
+                            <div key={dep.id} className="flex items-center justify-between px-4 py-2.5"
+                                 style={{
+                                     background: idx % 2 === 0 ? 'rgba(28,18,8,0.8)' : 'rgba(20,13,6,0.8)',
+                                     borderTop: idx > 0 ? '1px solid rgba(201,147,60,0.06)' : 'none',
+                                 }}>
+                                <div className="flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-[14px]"
+                                          style={{ color: G.gold, fontVariationSettings: "'FILL' 1" }}>shield_person</span>
+                                    <span className="font-label text-[11px]" style={{ color: G.parch }}>{dep.user?.username}</span>
+                                    {dep.commander && (
+                                        <span className="font-label text-[9px] italic"
+                                              style={{ color: G.epic }}>
+                                            + {dep.commander.name}
+                                        </span>
+                                    )}
+                                </div>
+                                <span className="font-headline font-black text-[13px]" style={{ color: G.gold }}>
+                                    {dep.contribution_score.toLocaleString('fr-FR')} pts
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* War History */}
+            <section className="mt-8">
+                <div className="flex items-center justify-between mb-4 px-0.5">
+                    <h2 className="font-headline text-[17px] font-black section-title" style={{ color: G.parch }}>
+                        Historique des Guerres
                     </h2>
-                    <span className="text-[10px] font-bold text-primary bg-primary-fixed px-2 py-0.5 rounded-full uppercase">80% Win Rate</span>
+                    {warHistory.length > 0 && (() => {
+                        const wins = warHistory.filter(w => w.winner_id === userClanId).length;
+                        const pct  = Math.round((wins / warHistory.length) * 100);
+                        return (
+                            <span className="font-label text-[10px] font-black uppercase px-2.5 py-1 rounded-full"
+                                  style={{ background: 'rgba(74,160,64,0.12)', border: '1px solid rgba(74,160,64,0.3)', color: G.forBrt }}>
+                                {pct}% Victoires
+                            </span>
+                        );
+                    })()}
                 </div>
-                <div className="relative torn-edge bg-surface-container shadow-2xl p-6 pb-12 overflow-hidden border-x-8 border-transparent" style={{ backgroundImage: "radial-gradient(circle at center, #ffeade 0%, #ffe3d2 100%)" }}>
-                    <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCIqQg8lSPdLCxk6ClmqmX07gqBmXvsKlfh9B1yHyWqDdmgBhVpILbXnuKwHJHRFODd6wceUHC0O1IA4Ccaoqh_KdcKwyATD5flMICjBKlj98rq51pbMDk2oZx5yYzH7krUMOQa_kT-rss3YfzQJRD1427uMNibTHb_iDOKUXbkjY4wh1vPni2uRRF7Nv76N30xToqEO09ytjWpqno2VmOPv27wBWULLn7FWOnxfBM3kUDckYuC-IivHC_zGkyjt83W8iIZR_pxHpQ')" }}></div>
-                    <div className="space-y-6 relative z-10">
-                        <div className="flex items-center justify-between border-b border-secondary/10 pb-4">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded bg-inverse-surface/10 flex items-center justify-center border border-secondary/20">
-                                    <span className="material-symbols-outlined text-secondary">shield</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-headline font-bold text-on-surface leading-tight">vs Black Skulls</h4>
-                                    <p className="text-[10px] text-outline font-bold uppercase">Il y a 2 jours • 50 vs 50</p>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <div className="text-primary font-headline font-black text-lg">GAGNÉ</div>
-                                <div className="text-[10px] font-bold text-on-surface-variant">245 - 210</div>
-                            </div>
+
+                <div className="corner-ornament rounded-xl overflow-hidden"
+                     style={{ border: `1px solid ${G.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
+
+                    {warHistory.length === 0 ? (
+                        <div className="p-8 text-center font-label text-sm italic" style={{ color: G.parchDm }}>
+                            Aucun historique pour l'instant.
                         </div>
-                        <div className="flex items-center justify-between border-b border-secondary/10 pb-4">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded bg-inverse-surface/10 flex items-center justify-center border border-secondary/20">
-                                    <span className="material-symbols-outlined text-secondary">shield</span>
+                    ) : warHistory.map((war, idx) => {
+                        const result   = getResult(war);
+                        const opponent = getOpponent(war);
+                        const won      = result === 'won';
+
+                        return (
+                            <div key={war.id} className="flex items-center justify-between p-4"
+                                 style={{
+                                     background: idx % 2 === 0
+                                         ? 'linear-gradient(135deg, #1c1108 0%, #140d06 100%)'
+                                         : 'linear-gradient(135deg, #180e06 0%, #110b05 100%)',
+                                     borderTop: idx > 0 ? '1px solid rgba(201,147,60,0.08)' : 'none',
+                                 }}>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                                         style={{
+                                             background: won ? 'rgba(45,90,39,0.15)' : 'rgba(139,26,26,0.12)',
+                                             border: `1px solid ${won ? 'rgba(74,160,64,0.3)' : 'rgba(139,26,26,0.3)'}`,
+                                         }}>
+                                        <span className="material-symbols-outlined text-lg"
+                                              style={{ color: won ? G.forBrt : G.crimBrt, fontVariationSettings: "'FILL' 1" }}>
+                                            {won ? 'shield' : 'dangerous'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-headline font-bold text-[14px]" style={{ color: G.parch }}>
+                                            vs {opponent}
+                                        </h4>
+                                        <p className="font-label text-[9px] uppercase tracking-wide mt-0.5" style={{ color: G.parchDm }}>
+                                            {new Date(war.scheduled_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
+                                            {' · '}{war.score_a} – {war.score_b}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="font-headline font-bold text-on-surface leading-tight">vs Shadow Fang</h4>
-                                    <p className="text-[10px] text-outline font-bold uppercase">Il y a 5 jours • 40 vs 40</p>
+
+                                <div className="text-right flex items-center gap-3">
+                                    <div className="font-headline font-black text-base"
+                                         style={{ color: won ? G.forBrt : G.crimBrt, textShadow: `0 0 8px ${won ? G.forBrt : G.crimBrt}55` }}>
+                                        {result === null ? '—' : won ? 'GAGNÉ' : 'PERDU'}
+                                    </div>
+                                    <Link href={`/wars/${war.id}`}
+                                          className="font-label text-[9px] uppercase tracking-wider px-2 py-1 rounded-lg transition-all hover:brightness-110"
+                                          style={{ background: 'rgba(201,147,60,0.08)', border: `1px solid ${G.border}`, color: G.gold }}>
+                                        Détail
+                                    </Link>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <div className="text-tertiary font-headline font-black text-lg">PERDU</div>
-                                <div className="text-[10px] font-bold text-on-surface-variant">190 - 205</div>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between border-b border-secondary/10 pb-4">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded bg-inverse-surface/10 flex items-center justify-center border border-secondary/20">
-                                    <span className="material-symbols-outlined text-secondary">shield</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-headline font-bold text-on-surface leading-tight">vs Silver Lions</h4>
-                                    <p className="text-[10px] text-outline font-bold uppercase">Il y a 1 semaine • 30 vs 30</p>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <div className="text-primary font-headline font-black text-lg">GAGNÉ</div>
-                                <div className="text-[10px] font-bold text-on-surface-variant">150 - 120</div>
-                            </div>
-                        </div>
-                        <div className="text-center pt-2">
-                            <button className="font-label text-[10px] font-black uppercase text-secondary tracking-widest flex items-center justify-center gap-2 w-full">
-                                VOIR TOUT L'HISTORIQUE
-                                <span className="material-symbols-outlined text-sm">expand_more</span>
-                            </button>
-                        </div>
-                    </div>
+                        );
+                    })}
                 </div>
             </section>
         </GameLayout>

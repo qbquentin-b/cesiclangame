@@ -17,19 +17,17 @@ class CraftingController extends Controller
 
         $user = $request->user();
 
-        // Simple crafting logic: requires 10 of 'metal' and 5 of 'energy'
+        // Simple crafting logic: requires 10 of 'metal' and 5 of 'food'
         return DB::transaction(function () use ($user, $request) {
-            $metal = Resource::where('user_id', $user->id)->where('type', 'metal')->lockForUpdate()->first();
-            $energy = Resource::where('user_id', $user->id)->where('type', 'energy')->lockForUpdate()->first();
+            $u = \App\Models\User::where('id', $user->id)->lockForUpdate()->first();
 
-            if (!$metal || $metal->amount < 10 || !$energy || $energy->amount < 5) {
-                return back()->withErrors(['message' => 'Insufficient resources']);
+            if ($u->metal < 10 || $u->food < 5) {
+                return back()->withErrors(['message' => 'Ressources insuffisantes.']);
             }
 
-            $metal->amount -= 10;
-            $energy->amount -= 5;
-            $metal->save();
-            $energy->save();
+            $u->metal -= 10;
+            $u->food  -= 5;
+            $u->save();
 
             Weapon::create([
                 'user_id' => $user->id,

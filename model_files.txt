@@ -1,9 +1,0 @@
-app/Models/User.php
-app/Models/Claim.php
-app/Models/War.php
-app/Models/Mission.php
-app/Models/Weapon.php
-app/Models/Drop.php
-app/Models/Bet.php
-app/Models/Resource.php
-app/Models/Clan.php

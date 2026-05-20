@@ -22,6 +22,16 @@ class User extends Authenticatable
         'clan_rank',
         'level',
         'global_rank',
+        'is_admin',
+        'wood',
+        'metal',
+        'food',
+        'gold',
+        'last_seen_at',
+    ];
+
+    protected $casts = [
+        'last_seen_at' => 'datetime',
     ];
 
     protected $hidden = [
@@ -40,5 +50,25 @@ class User extends Authenticatable
     public function clan()
     {
         return $this->belongsTo(Clan::class);
+    }
+
+    public function troops()
+    {
+        return $this->hasMany(UserTroop::class)->with('soldierType');
+    }
+
+    public function commanders()
+    {
+        return $this->hasMany(UserCommander::class)->with('commander');
+    }
+
+    public function activeCommander()
+    {
+        return $this->hasOne(UserCommander::class)->where('is_active', true)->with('commander');
+    }
+
+    public function warDeployments()
+    {
+        return $this->hasMany(WarDeployment::class);
     }
 }

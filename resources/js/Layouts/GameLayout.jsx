@@ -1,64 +1,169 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
-const TopAppBar = () => {
-    return (
-        <header className="bg-[#492811] dark:bg-[#1a0f06] docked full-width top-0 border-b-4 border-[#3c6704] shadow-[0_10px_30px_rgba(0,0,0,0.4)] flex justify-between items-center w-full px-6 py-4 h-20 sticky z-50">
-            <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full border-2 border-secondary bg-surface overflow-hidden shadow-inner">
-                    <img alt="Clan Crest Badge" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRzf2q5ZLxjNY38yR2gBzlcfpxsTqAETZPzuANr8Jn-HaMZHcoelgQij6DSlphU-SMMduhEANrU8AmTIuKbClFFvf5OIGa2lWQLaQ_rU8KgFxj2NwnWx84YtF6DTS9fmOVfo-sFQ1OCuAt23gWbQOxGJZQI9L45evLQPghUyCeOifd32S_anAFqhjO8nFHxxg0O92R4QJoPvXYlyJ4H6BgPN0rtugENzWHUSmoDjSQGL9bayY7vh8WtN212lsZAc24jt97U9vVheQ"/>
-                </div>
-                <h1 className="font-headline tracking-wider font-bold uppercase text-2xl font-black text-[#765a19] drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">JEU DE CLANS</h1>
-            </div>
-            <button className="text-[#765a19] hover:brightness-110 transition-all active:translate-y-0.5 duration-75">
-                <span className="material-symbols-outlined text-3xl">notifications</span>
-            </button>
-        </header>
-    );
+const NAV_TABS = [
+    { id: 'hub',      name: 'Hub',       icon: 'castle',           link: '/dashboard' },
+    { id: 'clan',     name: 'Clan',      icon: 'groups',            link: '/clan' },
+    { id: 'map',      name: 'Carte',     icon: 'map',               link: '/map' },
+    { id: 'village',  name: 'Village',   icon: 'location_city',     link: '/village' },
+    { id: 'market',   name: 'Marché',    icon: 'storefront',        link: '/market' },
+    { id: 'drops',    name: 'Drops',     icon: 'scrollable_header', link: '/drops' },
+    { id: 'guerres',  name: 'Guerres',   icon: 'swords',            link: '/wars' },
+    { id: 'troupes',  name: 'Troupes',   icon: 'shield_person',     link: '/troops' },
+    { id: 'jeux',     name: 'Jeux',      icon: 'casino',            link: '/games' },
+    { id: 'daily',    name: 'Quotidiens',icon: 'mystery',           link: '/daily-games' },
+    { id: 'top',      name: 'Top',       icon: 'leaderboard',       link: '/rankings' },
+    { id: 'messages', name: 'Pigeonnier',icon: 'mail',              link: '/messages', badge: 'unread_messages' },
+];
+
+const G = {
+    gold:   '#C9933C',
+    parch:  '#F2E4C4',
+    forge:  '#0A0705',
+    card:   '#1E1208',
+    border: 'rgba(201,147,60,0.18)',
+    crimson:'#8B1A1A',
 };
 
-const BottomNavBar = ({ activeTab }) => {
-    const tabs = [
-        { name: 'Hub', icon: 'castle', link: '/dashboard' },
-        { name: 'Clan', icon: 'groups', link: '/clan' },
-        { name: 'Drops', icon: 'scrollable_header', link: '/drops' },
-        { name: 'Wars', icon: 'swords', link: '/wars' },
-        { name: 'Games', icon: 'casino', link: '/games' },
-    ];
+const Sidebar = ({ activeTab }) => {
+    const { auth, unread_messages = 0, pending_friends = 0 } = usePage().props;
+    const user = auth?.user;
+    const clan = user?.clan;
+    const totalBadge = unread_messages + pending_friends;
 
     return (
-        <nav className="fixed bottom-0 left-0 w-full z-50 bg-[#fff8f5] dark:bg-[#2c1a0c] rounded-t-[2rem] border-t-2 border-[#765a19]/20 shadow-[0_-8px_24px_rgba(73,40,17,0.12)] flex justify-around items-center px-4 pb-6 pt-3">
-            {tabs.map((tab) => (
-                <Link
-                    key={tab.name}
-                    href={tab.link}
-                    className={`flex flex-col items-center justify-center px-4 py-1.5 transition-all duration-150 group ${
-                        activeTab === tab.name.toLowerCase()
-                            ? 'bg-[#3c6704] text-[#ffe3d2] rounded-xl shadow-inner active:scale-95'
-                            : 'text-[#492811] dark:text-[#ffe3d2]/60 hover:bg-[#ffe3d2] dark:hover:bg-[#3c2a1a] active:scale-95'
-                    }`}
+        <aside
+            className="fixed left-0 top-0 h-screen w-56 flex flex-col z-50 overflow-y-auto"
+            style={{
+                background: 'linear-gradient(180deg, #120c06 0%, #0A0705 100%)',
+                borderRight: `1px solid ${G.border}`,
+                boxShadow: '4px 0 24px rgba(0,0,0,0.5)',
+            }}
+        >
+            {/* Brand */}
+            <div className="px-5 pt-5 pb-4 flex items-center gap-3" style={{ borderBottom: `1px solid ${G.border}` }}>
+                <span
+                    className="material-symbols-outlined text-[22px]"
+                    style={{ color: G.gold, fontVariationSettings: "'FILL' 1", filter: 'drop-shadow(0 0 6px rgba(201,147,60,0.5))' }}
                 >
-                    <span className="material-symbols-outlined text-2xl" style={activeTab === tab.name.toLowerCase() ? { fontVariationSettings: "'FILL' 1" } : {}}>
-                        {tab.icon}
-                    </span>
-                    <span className="font-body text-[10px] font-bold uppercase">{tab.name}</span>
+                    castle
+                </span>
+                <span
+                    className="font-headline font-black uppercase tracking-[0.12em] text-[13px]"
+                    style={{ color: G.gold }}
+                >
+                    Jeu de Clans
+                </span>
+            </div>
+
+            {/* User info */}
+            {user && (
+                <div className="mx-3 mt-3 px-3 py-3 rounded-xl" style={{ background: 'rgba(201,147,60,0.06)', border: `1px solid ${G.border}` }}>
+                    <div className="font-headline font-bold text-sm truncate" style={{ color: G.parch }}>
+                        {user.username}
+                    </div>
+                    <div className="flex items-center justify-between mt-1">
+                        <span className="font-label text-[10px] uppercase tracking-wide truncate" style={{ color: 'rgba(201,147,60,0.55)' }}>
+                            {clan ? clan.name : 'Sans clan'}{user.clan_rank ? ` · ${user.clan_rank}` : ''}
+                        </span>
+                        <span className="font-label text-[10px] font-bold px-1.5 py-0.5 rounded ml-1 shrink-0"
+                              style={{ background: 'rgba(201,147,60,0.15)', color: G.gold }}>
+                            Nv.{user.level ?? 1}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                        <span className="material-symbols-outlined text-[13px]" style={{ color: G.gold, fontVariationSettings: "'FILL' 1" }}>diamond</span>
+                        <span className="font-headline text-xs font-black" style={{ color: G.gold }}>
+                            {(user.crystals ?? 0).toLocaleString('fr-FR')}
+                        </span>
+                        <span className="material-symbols-outlined text-[13px] ml-2" style={{ color: '#E57373', fontVariationSettings: "'FILL' 1" }}>swords</span>
+                        <span className="font-headline text-xs font-black" style={{ color: '#E57373' }}>
+                            {(user.war_points ?? 0).toLocaleString('fr-FR')}
+                        </span>
+                    </div>
+                </div>
+            )}
+
+            {/* Nav */}
+            <nav className="flex-1 px-2 py-4 space-y-0.5">
+                {NAV_TABS.map((tab) => {
+                    const active = activeTab === tab.id;
+                    return (
+                        <Link
+                            key={tab.id}
+                            href={tab.link}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 relative"
+                            style={{
+                                background: active ? 'rgba(201,147,60,0.1)' : 'transparent',
+                                borderLeft: active ? `3px solid ${G.gold}` : '3px solid transparent',
+                            }}
+                        >
+                            <span
+                                className="material-symbols-outlined text-[20px]"
+                                style={{
+                                    color: active ? G.gold : 'rgba(242,228,196,0.28)',
+                                    fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0",
+                                    filter: active ? 'drop-shadow(0 0 5px rgba(201,147,60,0.45))' : 'none',
+                                }}
+                            >
+                                {tab.icon}
+                            </span>
+                            <span
+                                className="font-headline text-[13px] font-bold"
+                                style={{ color: active ? G.parch : 'rgba(242,228,196,0.38)' }}
+                            >
+                                {tab.name}
+                            </span>
+                            {tab.badge === 'unread_messages' && totalBadge > 0 && (
+                                <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-full"
+                                      style={{ background: G.crimson, color: '#fff', minWidth: '18px', textAlign: 'center' }}>
+                                    {totalBadge}
+                                </span>
+                            )}
+                        </Link>
+                    );
+                })}
+            </nav>
+
+            {/* Admin */}
+            {user?.is_admin && (
+                <div className="px-2 pb-2">
+                    <Link
+                        href="/admin"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all"
+                        style={{ background: 'rgba(139,26,26,0.15)', border: '1px solid rgba(139,26,26,0.3)' }}
+                    >
+                        <span className="material-symbols-outlined text-[20px]" style={{ color: '#C53030' }}>admin_panel_settings</span>
+                        <span className="font-headline text-[13px] font-bold" style={{ color: '#C53030' }}>Admin</span>
+                    </Link>
+                </div>
+            )}
+
+            {/* Logout */}
+            <div className="px-2 pb-5 pt-2" style={{ borderTop: `1px solid ${G.border}` }}>
+                <Link
+                    href="/logout"
+                    method="post"
+                    as="button"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all hover:brightness-125"
+                    style={{ color: 'rgba(242,228,196,0.28)' }}
+                >
+                    <span className="material-symbols-outlined text-[20px]">logout</span>
+                    <span className="font-headline text-[13px] font-bold">Déconnexion</span>
                 </Link>
-            ))}
-        </nav>
+            </div>
+        </aside>
     );
 };
 
-const Layout = ({ children, activeTab }) => {
-    return (
-        <div className="min-h-screen">
-            <TopAppBar />
-            <main className="px-4 py-6 space-y-8 max-w-md mx-auto">
-                {children}
-            </main>
-            <BottomNavBar activeTab={activeTab} />
-        </div>
-    );
-};
+const GameLayout = ({ children, activeTab }) => (
+    <div className="min-h-screen flex" style={{ background: G.forge }}>
+        <Sidebar activeTab={activeTab} />
+        <main className="flex-1 ml-56 min-h-screen px-8 py-8">
+            {children}
+        </main>
+    </div>
+);
 
-export default Layout;
-export { TopAppBar, BottomNavBar };
+export default GameLayout;
+export { Sidebar };

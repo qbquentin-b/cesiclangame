@@ -29,11 +29,26 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user?->load('clan'),
             ],
+            'flash' => fn () => array_merge(
+                ['message' => $request->session()->get('message')],
+                $request->session()->get('flash', [])
+            ),
+            'errors' => fn () => $request->session()->get('errors')
+                ? $request->session()->get('errors')->getBag('default')->getMessages()
+                : (object)[],
+            'unread_messages' => $user
+                ? \App\Models\Message::where('receiver_id', $user->id)->whereNull('read_at')->count()
+                : 0,
+            'pending_friends' => $user
+                ? \App\Models\Friendship::where('addressee_id', $user->id)->where('status', 'pending')->count()
+                : 0,
         ];
     }
 }
