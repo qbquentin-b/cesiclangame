@@ -393,6 +393,43 @@ class BlackjackController extends Controller
         }
     }
 
+    // POST /casino/blackjack/{table}/restart
+    public function restart(BlackjackTable $table): JsonResponse
+    {
+        $user = auth()->user();
+
+        if ($table->status !== 'finished') {
+            return response()->json(['error' => 'La partie n\'est pas terminée.'], 422);
+        }
+
+        // Only players at the table can restart
+        $isAtTable = BlackjackPlayer::where('table_id', $table->id)
+            ->where('user_id', $user->id)
+            ->exists();
+
+        if (!$isAtTable) {
+            return response()->json(['error' => 'Vous n\'êtes pas à cette table.'], 403);
+        }
+
+        // Reset table for a new round
+        $table->update([
+            'status'          => 'waiting',
+            'deck'            => null,
+            'dealer_hand'     => null,
+            'current_seat'    => 0,
+            'last_action_at'  => now(),
+        ]);
+
+        // Reset all players for new round
+        $table->players()->update([
+            'hand'   => null,
+            'bet'    => 0,
+            'status' => 'waiting',
+        ]);
+
+        return response()->json($this->buildState($table->fresh(), $user));
+    }
+
     private function buildState(BlackjackTable $table, $authUser): array
     {
         $table->load(['players.user:id,username']);

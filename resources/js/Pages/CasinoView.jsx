@@ -500,6 +500,10 @@ function BlackjackGame({ tableId, onLeave, myUserId }) {
         onLeave();
     };
 
+    const handleRestart = async () => {
+        await doAction(`/casino/blackjack/${tableId}/restart`);
+    };
+
     if (!state) {
         return (
             <div className="flex items-center justify-center py-20">
@@ -665,13 +669,22 @@ function BlackjackGame({ tableId, onLeave, myUserId }) {
                                 {STATUS_LABELS[my_player.status]?.label ?? my_player.status}
                             </div>
                         )}
-                        <button
-                            onClick={handleLeave}
-                            className="px-6 py-2 rounded-xl font-bold"
-                            style={{ background: G.gold, color: G.forge, border: 'none' }}
-                        >
-                            Nouvelle partie
-                        </button>
+                        <div className="flex gap-3 justify-center">
+                            <button
+                                onClick={handleRestart}
+                                className="px-6 py-2 rounded-xl font-bold"
+                                style={{ background: G.emerald, color: '#fff', border: 'none' }}
+                            >
+                                🔄 Rejouer
+                            </button>
+                            <button
+                                onClick={handleLeave}
+                                className="px-6 py-2 rounded-xl font-bold"
+                                style={{ background: 'rgba(255,255,255,0.08)', color: G.parchDm, border: `1px solid ${G.border}` }}
+                            >
+                                Quitter
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>

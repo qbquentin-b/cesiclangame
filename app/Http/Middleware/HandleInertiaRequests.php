@@ -35,6 +35,13 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $user?->load('clan'),
+                'resources' => $user ? [
+                    'crystals' => $user->crystals,
+                    'wood'     => $user->wood,
+                    'metal'    => $user->metal,
+                    'food'     => $user->food,
+                    'gold'     => $user->gold,
+                ] : null,
             ],
             'flash' => fn () => array_merge(
                 ['message' => $request->session()->get('message')],

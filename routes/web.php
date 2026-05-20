@@ -39,7 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/clan', [ClanController::class, 'create'])->name('clan.create');
     Route::post('/clan/join/{clan}', [ClanController::class, 'join'])->name('clan.join');
     Route::post('/clan/donate', [ClanController::class, 'donate'])->name('clan.donate');
-    Route::patch('/clan/logo', [ClanController::class, 'updateLogo'])->name('clan.logo');
+    Route::post('/clan/logo', [ClanController::class, 'updateLogo'])->name('clan.logo');
     Route::post('/clan/promote/{user}', [ClanController::class, 'promote'])->name('clan.promote');
     Route::post('/clan/demote/{user}', [ClanController::class, 'demote'])->name('clan.demote');
     Route::post('/clan/kick/{user}', [ClanController::class, 'kick'])->name('clan.kick');
@@ -180,6 +180,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/casino/blackjack/{table}/hit', [BlackjackController::class, 'hit'])->name('casino.bj.hit');
     Route::post('/casino/blackjack/{table}/stand', [BlackjackController::class, 'stand'])->name('casino.bj.stand');
     Route::get('/casino/blackjack/{table}/state', [BlackjackController::class, 'state'])->name('casino.bj.state');
+    Route::post('/casino/blackjack/{table}/restart', [BlackjackController::class, 'restart'])->name('casino.bj.restart');
 
     Route::middleware([IsAdmin::class])->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin');

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import React, { useEffect } from 'react';
+import { Link, router, usePage } from '@inertiajs/react';
 
 const NAV_TABS = [
     { id: 'hub',      name: 'Hub',       icon: 'castle',           link: '/dashboard' },
@@ -26,11 +26,25 @@ const G = {
     crimson:'#8B1A1A',
 };
 
+const RES = [
+    { key: 'food',     icon: '🌾' },
+    { key: 'wood',     icon: '🪵' },
+    { key: 'metal',    icon: '⚙️' },
+    { key: 'gold',     icon: '🪙' },
+];
+
 const Sidebar = ({ activeTab }) => {
     const { auth, unread_messages = 0, pending_friends = 0 } = usePage().props;
     const user = auth?.user;
+    const resources = auth?.resources;
     const clan = user?.clan;
     const totalBadge = unread_messages + pending_friends;
+
+    // Refresh shared props every 60s to keep resources up to date
+    useEffect(() => {
+        const id = setInterval(() => router.reload({ only: ['auth'] }), 60_000);
+        return () => clearInterval(id);
+    }, []);
 
     return (
         <aside
@@ -82,6 +96,18 @@ const Sidebar = ({ activeTab }) => {
                             {(user.war_points ?? 0).toLocaleString('fr-FR')}
                         </span>
                     </div>
+                    {resources && (
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 mt-2 pt-2" style={{ borderTop: '1px solid rgba(201,147,60,0.12)' }}>
+                            {RES.map(({ key, icon }) => (
+                                <div key={key} className="flex items-center gap-1">
+                                    <span className="text-[10px]">{icon}</span>
+                                    <span className="font-headline text-[10px] font-black" style={{ color: 'rgba(242,228,196,0.6)' }}>
+                                        {(resources[key] ?? 0).toLocaleString('fr-FR')}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
 

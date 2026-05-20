@@ -181,7 +181,7 @@ export default function ClanView({ clan, members = [], publicClans = [], announc
 
     const handleLogoUpdate = (e) => {
         e.preventDefault();
-        router.patch(route('clan.logo'), { crest_url: logoUrl }, {
+        router.post(route('clan.logo'), { crest_url: logoUrl }, {
             preserveScroll: true,
             onSuccess: () => setShowLogoForm(false),
         });
