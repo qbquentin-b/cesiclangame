@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('daily_game_completions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->enum('game_type', ['queens', 'tango', 'zip', 'patches']);
             $table->date('game_date');
             $table->timestamp('completed_at');

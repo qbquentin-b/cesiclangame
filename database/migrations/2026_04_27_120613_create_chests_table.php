@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('chests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->enum('chest_type', ['common', 'rare', 'legendary']);
             $table->enum('status', ['unopened', 'opened'])->default('unopened');
             $table->string('source')->default('game'); // game, admin
