@@ -154,7 +154,8 @@ export default function ClanView({ clan, members = [], publicClans = [], announc
     const myLevel    = HIERARCHY[myRank] ?? -1;
 
     const [donateAmount,    setDonateAmount]    = useState('');
-    const [logoUrl,         setLogoUrl]         = useState(clan?.crest_url ?? '');
+    const [logoFile,        setLogoFile]        = useState(null);
+    const [logoPreview,     setLogoPreview]     = useState(clan?.crest_url ?? null);
     const [showLogoForm,    setShowLogoForm]    = useState(false);
     const [annTitle,        setAnnTitle]        = useState('');
     const [annBody,         setAnnBody]         = useState('');
@@ -179,11 +180,23 @@ export default function ClanView({ clan, members = [], publicClans = [], announc
         });
     };
 
+    const handleLogoFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setLogoFile(file);
+            setLogoPreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleLogoUpdate = (e) => {
         e.preventDefault();
-        router.post(route('clan.logo'), { crest_url: logoUrl }, {
+        if (!logoFile) return;
+        const fd = new FormData();
+        fd.append('logo', logoFile);
+        router.post(route('clan.logo'), fd, {
+            forceFormData: true,
             preserveScroll: true,
-            onSuccess: () => setShowLogoForm(false),
+            onSuccess: () => { setShowLogoForm(false); setLogoFile(null); },
         });
     };
 
@@ -270,11 +283,18 @@ export default function ClanView({ clan, members = [], publicClans = [], announc
             {isLeader && showLogoForm && (
                 <section className="mb-4 rounded-xl p-4" style={{ background: G.cardLt, border: `1px solid ${G.borderA}` }}>
                     <h4 className="font-headline font-bold text-sm mb-3" style={{ color: G.gold }}>Modifier le logo du clan</h4>
-                    <form onSubmit={handleLogoUpdate} className="flex gap-3">
-                        <input type="url" required placeholder="URL de l'image (https://...)"
-                               className={inputCls} style={inputStyle}
-                               value={logoUrl} onChange={e => setLogoUrl(e.target.value)} />
-                        <button type="submit" className="px-5 py-2 rounded-lg font-headline font-bold text-sm uppercase whitespace-nowrap"
+                    <form onSubmit={handleLogoUpdate} className="flex flex-wrap gap-3 items-center">
+                        <label className="cursor-pointer px-4 py-2 rounded-lg font-headline font-bold text-sm uppercase"
+                               style={{ background: 'rgba(201,147,60,0.12)', border: `1px solid ${G.borderA}`, color: G.parch }}>
+                            Choisir une image
+                            <input type="file" accept="image/*" className="hidden" onChange={handleLogoFileChange} />
+                        </label>
+                        {logoPreview && (
+                            <img src={logoPreview} alt="" className="w-12 h-12 rounded-xl object-cover"
+                                 style={{ border: `1px solid ${G.border}` }} />
+                        )}
+                        <button type="submit" disabled={!logoFile}
+                                className="px-5 py-2 rounded-lg font-headline font-bold text-sm uppercase whitespace-nowrap disabled:opacity-40"
                                 style={{ background: G.gold, color: G.forge }}>
                             Enregistrer
                         </button>
@@ -284,13 +304,10 @@ export default function ClanView({ clan, members = [], publicClans = [], announc
                             Annuler
                         </button>
                     </form>
-                    {logoUrl && (
-                        <div className="mt-3 flex items-center gap-3">
-                            <span className="font-label text-xs" style={{ color: G.parchDm }}>Aperçu :</span>
-                            <img src={logoUrl} alt="" className="w-12 h-12 rounded-xl object-cover"
-                                 style={{ border: `1px solid ${G.border}` }}
-                                 onError={e => e.target.style.display = 'none'} />
-                        </div>
+                    {!logoFile && (
+                        <p className="mt-2 font-label text-[11px]" style={{ color: G.parchDm }}>
+                            Formats acceptés : JPG, PNG, GIF, WEBP — max 2 Mo
+                        </p>
                     )}
                 </section>
             )}

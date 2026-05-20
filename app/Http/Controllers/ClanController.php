@@ -7,6 +7,7 @@ use App\Models\ClanAnnouncement;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ClanController extends Controller
@@ -205,7 +206,7 @@ class ClanController extends Controller
     public function updateLogo(Request $request)
     {
         $request->validate([
-            'crest_url' => 'required|url|max:500',
+            'logo' => 'required|image|max:2048|mimes:jpg,jpeg,png,gif,webp',
         ]);
 
         $user = $request->user();
@@ -214,7 +215,10 @@ class ClanController extends Controller
             return back()->withErrors(['message' => 'Seul le chef de clan peut modifier le logo.']);
         }
 
-        Clan::where('id', $user->clan_id)->update(['crest_url' => $request->crest_url]);
+        $path = $request->file('logo')->store('clan_logos', 'public');
+        $url  = Storage::url($path);
+
+        Clan::where('id', $user->clan_id)->update(['crest_url' => $url]);
 
         return back()->with('message', 'Logo du clan mis à jour !');
     }

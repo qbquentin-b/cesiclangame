@@ -44,6 +44,13 @@ export default function RankingsView({ topClans = [], topPlayers = [] }) {
                                 <div className={`w-10 h-10 flex items-center justify-center font-black text-xl rounded-full border-2 ${index === 0 ? 'bg-[#FFD700] border-[#B8860B] text-[#fff]' : index === 1 ? 'bg-[#C0C0C0] border-[#808080] text-[#fff]' : index === 2 ? 'bg-[#cd7f32] border-[#8B4513] text-[#fff]' : 'bg-inverse-surface border-secondary text-secondary-fixed'}`}>
                                     {index + 1}
                                 </div>
+                                <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center font-black text-lg shrink-0"
+                                     style={{ background: clan.color || '#765a19', border: '1px solid rgba(118,90,25,0.4)' }}>
+                                    {clan.crest_url
+                                        ? <img src={clan.crest_url} alt="" className="w-full h-full object-cover" />
+                                        : <span style={{ color: '#fff' }}>{clan.name[0]}</span>
+                                    }
+                                </div>
                                 <div className="flex-1">
                                     <h4 className="font-headline font-bold text-xl text-inverse-surface leading-none">{clan.name}</h4>
                                     <p className="text-xs text-on-surface-variant font-bold font-label uppercase mt-1">Lvl {clan.level} • {clan.tier}</p>

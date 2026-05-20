@@ -129,6 +129,7 @@ function SlotMachine({ jackpot: initialJackpot, freeSpins: initialFreeSpins, cry
             setFreeSpins(data.free_spins);
             setJackpot(data.jackpot);
             setLastWin(data.win);
+            router.reload({ only: ['auth'] });
 
             // Flash animation
             if (data.win.type === 'jackpot') {
@@ -488,6 +489,7 @@ function BlackjackGame({ tableId, onLeave, myUserId }) {
         try {
             await apiFetch(url, { method, body: method !== 'GET' ? JSON.stringify(body) : undefined });
             await fetchState();
+            router.reload({ only: ['auth'] });
         } catch (e) {
             setError(e.message);
         } finally {
