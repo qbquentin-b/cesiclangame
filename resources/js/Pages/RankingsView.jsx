@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import GameLayout from '@/Layouts/GameLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 export default function RankingsView({ topClans = [], topPlayers = [] }) {
     const [activeTab, setActiveTab] = useState('clans');
@@ -68,7 +68,10 @@ export default function RankingsView({ topClans = [], topPlayers = [] }) {
                                     {index + 1}
                                 </div>
                                 <div className="flex-1">
-                                    <h4 className="font-headline font-bold text-xl text-inverse-surface leading-none">{player.username}</h4>
+                                    <Link href={route('players.show', player.id)}
+                                          className="font-headline font-bold text-xl text-inverse-surface leading-none hover:underline">
+                                        {player.username}
+                                    </Link>
                                     {player.clan ? (
                                         <p className="text-[11px] text-[#3c6704] font-bold font-label mt-1">[{player.clan.name}]</p>
                                     ) : (

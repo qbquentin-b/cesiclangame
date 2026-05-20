@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BlackjackController;
+use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\CasinoController;
 use App\Http\Controllers\ChestController;
 use App\Http\Controllers\ClanAnnouncementController;
@@ -132,6 +133,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/chests/{chest}/open', [ChestController::class, 'open'])->name('chests.open');
 
     Route::get('/rankings', [RankingController::class, 'index'])->name('rankings');
+    Route::get('/players/{user}', [PlayerController::class, 'show'])->name('players.show');
 
     // Pigeonnier — messages & amis
     Route::get('/messages', [MessageController::class, 'index'])->name('messages');

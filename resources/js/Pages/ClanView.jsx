@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import GameLayout from '@/Layouts/GameLayout';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 
 const G = {
     gold:    '#C9933C',
@@ -358,9 +358,11 @@ export default function ClanView({ clan, members = [], publicClans = [], announc
 
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
-                                            <span className="font-headline font-bold text-sm" style={{ color: G.parch }}>
+                                            <Link href={route('players.show', member.id)}
+                                                  className="font-headline font-bold text-sm hover:underline"
+                                                  style={{ color: G.parch }}>
                                                 {member.username} {isMe && <span style={{ color: G.parchDm }}>(vous)</span>}
-                                            </span>
+                                            </Link>
                                             <span className="font-label text-[9px] font-black uppercase px-2 py-0.5 rounded"
                                                   style={{ background: rs.bg, border: `1px solid ${rs.border}`, color: rs.text }}>
                                                 {RANK_LABELS[member.clan_rank] ?? member.clan_rank}

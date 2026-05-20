@@ -1,100 +1,100 @@
 {
-  "_ApplicationLogo-2G8eTMCF.js": {
-    "file": "assets/ApplicationLogo-2G8eTMCF.js",
+  "_ApplicationLogo-Dj5-fWSm.js": {
+    "file": "assets/ApplicationLogo-Dj5-fWSm.js",
     "name": "ApplicationLogo",
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "_GameLayout-CcIRzFn0.js": {
-    "file": "assets/GameLayout-CcIRzFn0.js",
+  "_GameLayout-CXz6J84q.js": {
+    "file": "assets/GameLayout-CXz6J84q.js",
     "name": "GameLayout",
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "_GuestLayout-CorXXqoe.js": {
-    "file": "assets/GuestLayout-CorXXqoe.js",
+  "_GuestLayout-Lquu7-Ed.js": {
+    "file": "assets/GuestLayout-Lquu7-Ed.js",
     "name": "GuestLayout",
     "imports": [
       "resources/js/app.jsx",
-      "_ApplicationLogo-2G8eTMCF.js"
+      "_ApplicationLogo-Dj5-fWSm.js"
     ]
   },
-  "_InputError-DN-apcDK.js": {
-    "file": "assets/InputError-DN-apcDK.js",
+  "_InputError-DHUZ3xCq.js": {
+    "file": "assets/InputError-DHUZ3xCq.js",
     "name": "InputError",
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "_InputLabel-BjO4d0RR.js": {
-    "file": "assets/InputLabel-BjO4d0RR.js",
+  "_InputLabel-VQo-8BFV.js": {
+    "file": "assets/InputLabel-VQo-8BFV.js",
     "name": "InputLabel",
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "_PrimaryButton-xPBVWWQK.js": {
-    "file": "assets/PrimaryButton-xPBVWWQK.js",
+  "_PrimaryButton-BcmpiSIp.js": {
+    "file": "assets/PrimaryButton-BcmpiSIp.js",
     "name": "PrimaryButton",
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "_TextInput-Ce8UccvA.js": {
-    "file": "assets/TextInput-Ce8UccvA.js",
+  "_TextInput-BHra3oY0.js": {
+    "file": "assets/TextInput-BHra3oY0.js",
     "name": "TextInput",
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "_transition-CLLUhPJ4.js": {
-    "file": "assets/transition-CLLUhPJ4.js",
+  "_transition-Bwh_UhDQ.js": {
+    "file": "assets/transition-Bwh_UhDQ.js",
     "name": "transition",
     "imports": [
       "resources/js/app.jsx"
     ]
   },
   "resources/js/Pages/AdminPanel.jsx": {
-    "file": "assets/AdminPanel-CDRA1pmv.js",
+    "file": "assets/AdminPanel-CtPsiiG3.js",
     "name": "AdminPanel",
     "src": "resources/js/Pages/AdminPanel.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/Auth/ConfirmPassword.jsx": {
-    "file": "assets/ConfirmPassword-CFqpCzCy.js",
+    "file": "assets/ConfirmPassword-BsfjE_wk.js",
     "name": "ConfirmPassword",
     "src": "resources/js/Pages/Auth/ConfirmPassword.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_InputError-DN-apcDK.js",
-      "_InputLabel-BjO4d0RR.js",
-      "_PrimaryButton-xPBVWWQK.js",
-      "_TextInput-Ce8UccvA.js",
-      "_GuestLayout-CorXXqoe.js"
+      "_InputError-DHUZ3xCq.js",
+      "_InputLabel-VQo-8BFV.js",
+      "_PrimaryButton-BcmpiSIp.js",
+      "_TextInput-BHra3oY0.js",
+      "_GuestLayout-Lquu7-Ed.js"
     ]
   },
   "resources/js/Pages/Auth/ForgotPassword.jsx": {
-    "file": "assets/ForgotPassword-s6h_Zoey.js",
+    "file": "assets/ForgotPassword-CYgxLkUP.js",
     "name": "ForgotPassword",
     "src": "resources/js/Pages/Auth/ForgotPassword.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_InputError-DN-apcDK.js",
-      "_PrimaryButton-xPBVWWQK.js",
-      "_TextInput-Ce8UccvA.js",
-      "_GuestLayout-CorXXqoe.js"
+      "_InputError-DHUZ3xCq.js",
+      "_PrimaryButton-BcmpiSIp.js",
+      "_TextInput-BHra3oY0.js",
+      "_GuestLayout-Lquu7-Ed.js"
     ]
   },
   "resources/js/Pages/Auth/Login.jsx": {
-    "file": "assets/Login-CnvbzfkW.js",
+    "file": "assets/Login-BdQ1dskY.js",
     "name": "Login",
     "src": "resources/js/Pages/Auth/Login.jsx",
     "isDynamicEntry": true,
@@ -103,247 +103,257 @@
     ]
   },
   "resources/js/Pages/Auth/Register.jsx": {
-    "file": "assets/Register-DBJEPH8O.js",
+    "file": "assets/Register-BPY0XkWL.js",
     "name": "Register",
     "src": "resources/js/Pages/Auth/Register.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_InputError-DN-apcDK.js"
+      "_InputError-DHUZ3xCq.js"
     ]
   },
   "resources/js/Pages/Auth/ResetPassword.jsx": {
-    "file": "assets/ResetPassword-Ds78vgTQ.js",
+    "file": "assets/ResetPassword-Dm4u-wdW.js",
     "name": "ResetPassword",
     "src": "resources/js/Pages/Auth/ResetPassword.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_InputError-DN-apcDK.js",
-      "_InputLabel-BjO4d0RR.js",
-      "_PrimaryButton-xPBVWWQK.js",
-      "_TextInput-Ce8UccvA.js",
-      "_GuestLayout-CorXXqoe.js"
+      "_InputError-DHUZ3xCq.js",
+      "_InputLabel-VQo-8BFV.js",
+      "_PrimaryButton-BcmpiSIp.js",
+      "_TextInput-BHra3oY0.js",
+      "_GuestLayout-Lquu7-Ed.js"
     ]
   },
   "resources/js/Pages/Auth/VerifyEmail.jsx": {
-    "file": "assets/VerifyEmail-BEj_Mwe6.js",
+    "file": "assets/VerifyEmail-CNnzaDAA.js",
     "name": "VerifyEmail",
     "src": "resources/js/Pages/Auth/VerifyEmail.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_PrimaryButton-xPBVWWQK.js",
-      "_GuestLayout-CorXXqoe.js"
+      "_PrimaryButton-BcmpiSIp.js",
+      "_GuestLayout-Lquu7-Ed.js"
     ]
   },
   "resources/js/Pages/CasinoView.jsx": {
-    "file": "assets/CasinoView-nfqYkz5s.js",
+    "file": "assets/CasinoView-BzKruSGK.js",
     "name": "CasinoView",
     "src": "resources/js/Pages/CasinoView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/ClanView.jsx": {
-    "file": "assets/ClanView-BLTqJk8a.js",
+    "file": "assets/ClanView-DtOnE7nt.js",
     "name": "ClanView",
     "src": "resources/js/Pages/ClanView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/DailyGamesView.jsx": {
-    "file": "assets/DailyGamesView-CXOFjSse.js",
+    "file": "assets/DailyGamesView-2obmJtHC.js",
     "name": "DailyGamesView",
     "src": "resources/js/Pages/DailyGamesView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/Dashboard.jsx": {
-    "file": "assets/Dashboard-B_OHC11z.js",
+    "file": "assets/Dashboard-CbeeT-PM.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Dashboard.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/DropsView.jsx": {
-    "file": "assets/DropsView-DXiyrtAH.js",
+    "file": "assets/DropsView-DwBnnNG5.js",
     "name": "DropsView",
     "src": "resources/js/Pages/DropsView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/GamesView.jsx": {
-    "file": "assets/GamesView-C1JbMKgq.js",
+    "file": "assets/GamesView-BialU7ul.js",
     "name": "GamesView",
     "src": "resources/js/Pages/GamesView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/LegendaryWarView.jsx": {
-    "file": "assets/LegendaryWarView-BChjDbFU.js",
+    "file": "assets/LegendaryWarView-Qjwx_1xy.js",
     "name": "LegendaryWarView",
     "src": "resources/js/Pages/LegendaryWarView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/MapView.jsx": {
-    "file": "assets/MapView-As2b1idK.js",
+    "file": "assets/MapView-C1ftq5OL.js",
     "name": "MapView",
     "src": "resources/js/Pages/MapView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/MarketView.jsx": {
-    "file": "assets/MarketView-DtNGDvd6.js",
+    "file": "assets/MarketView-6Lwowr-x.js",
     "name": "MarketView",
     "src": "resources/js/Pages/MarketView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/PigeonView.jsx": {
-    "file": "assets/PigeonView-DTBhXm6S.js",
+    "file": "assets/PigeonView-BEtNeQ2h.js",
     "name": "PigeonView",
     "src": "resources/js/Pages/PigeonView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
+    ]
+  },
+  "resources/js/Pages/PlayerProfile.jsx": {
+    "file": "assets/PlayerProfile-Cm8H45kl.js",
+    "name": "PlayerProfile",
+    "src": "resources/js/Pages/PlayerProfile.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/Profile/Edit.jsx": {
-    "file": "assets/Edit-CF-3pRwr.js",
+    "file": "assets/Edit-BExtl8DL.js",
     "name": "Edit",
     "src": "resources/js/Pages/Profile/Edit.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/Pages/Profile/Partials/DeleteUserForm.jsx",
-      "_transition-CLLUhPJ4.js",
-      "_ApplicationLogo-2G8eTMCF.js",
+      "_transition-Bwh_UhDQ.js",
+      "_ApplicationLogo-Dj5-fWSm.js",
       "resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx",
       "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.jsx"
     ]
   },
   "resources/js/Pages/Profile/Partials/DeleteUserForm.jsx": {
-    "file": "assets/DeleteUserForm-Buh8crdP.js",
+    "file": "assets/DeleteUserForm-DtoQSRIL.js",
     "name": "DeleteUserForm",
     "src": "resources/js/Pages/Profile/Partials/DeleteUserForm.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_transition-CLLUhPJ4.js",
-      "_InputError-DN-apcDK.js",
-      "_InputLabel-BjO4d0RR.js",
-      "_TextInput-Ce8UccvA.js"
+      "_transition-Bwh_UhDQ.js",
+      "_InputError-DHUZ3xCq.js",
+      "_InputLabel-VQo-8BFV.js",
+      "_TextInput-BHra3oY0.js"
     ]
   },
   "resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx": {
-    "file": "assets/UpdatePasswordForm-0N2PVUuB.js",
+    "file": "assets/UpdatePasswordForm-b5fPcx_B.js",
     "name": "UpdatePasswordForm",
     "src": "resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_transition-CLLUhPJ4.js",
-      "_InputError-DN-apcDK.js",
-      "_InputLabel-BjO4d0RR.js",
-      "_PrimaryButton-xPBVWWQK.js",
-      "_TextInput-Ce8UccvA.js"
+      "_transition-Bwh_UhDQ.js",
+      "_InputError-DHUZ3xCq.js",
+      "_InputLabel-VQo-8BFV.js",
+      "_PrimaryButton-BcmpiSIp.js",
+      "_TextInput-BHra3oY0.js"
     ]
   },
   "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.jsx": {
-    "file": "assets/UpdateProfileInformationForm-BjG4P4-d.js",
+    "file": "assets/UpdateProfileInformationForm-yh1bHkyf.js",
     "name": "UpdateProfileInformationForm",
     "src": "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_transition-CLLUhPJ4.js",
-      "_InputError-DN-apcDK.js",
-      "_InputLabel-BjO4d0RR.js",
-      "_PrimaryButton-xPBVWWQK.js",
-      "_TextInput-Ce8UccvA.js"
+      "_transition-Bwh_UhDQ.js",
+      "_InputError-DHUZ3xCq.js",
+      "_InputLabel-VQo-8BFV.js",
+      "_PrimaryButton-BcmpiSIp.js",
+      "_TextInput-BHra3oY0.js"
     ]
   },
   "resources/js/Pages/RankingsView.jsx": {
-    "file": "assets/RankingsView-_7AXBFER.js",
+    "file": "assets/RankingsView-BQoi6lCQ.js",
     "name": "RankingsView",
     "src": "resources/js/Pages/RankingsView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/TroopsView.jsx": {
-    "file": "assets/TroopsView-Bs7I8003.js",
+    "file": "assets/TroopsView-DqwC3uh9.js",
     "name": "TroopsView",
     "src": "resources/js/Pages/TroopsView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/VillageView.jsx": {
-    "file": "assets/VillageView-DiQ91u_5.js",
+    "file": "assets/VillageView-CxPKgXlK.js",
     "name": "VillageView",
     "src": "resources/js/Pages/VillageView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/WarDetail.jsx": {
-    "file": "assets/WarDetail-COx_-kSG.js",
+    "file": "assets/WarDetail-BfoAEsFw.js",
     "name": "WarDetail",
     "src": "resources/js/Pages/WarDetail.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/WarView.jsx": {
-    "file": "assets/WarView-CfX8PcMO.js",
+    "file": "assets/WarView-CfwG_HiL.js",
     "name": "WarView",
     "src": "resources/js/Pages/WarView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "_GameLayout-CcIRzFn0.js"
+      "_GameLayout-CXz6J84q.js"
     ]
   },
   "resources/js/Pages/Welcome.jsx": {
-    "file": "assets/Welcome-DrPbAqqA.js",
+    "file": "assets/Welcome-D98Wf3YY.js",
     "name": "Welcome",
     "src": "resources/js/Pages/Welcome.jsx",
     "isDynamicEntry": true,
@@ -352,7 +362,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-DvMSrVxI.js",
+    "file": "assets/app-Bgu10e3K.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -374,6 +384,7 @@
       "resources/js/Pages/MapView.jsx",
       "resources/js/Pages/MarketView.jsx",
       "resources/js/Pages/PigeonView.jsx",
+      "resources/js/Pages/PlayerProfile.jsx",
       "resources/js/Pages/Profile/Edit.jsx",
       "resources/js/Pages/Profile/Partials/DeleteUserForm.jsx",
       "resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx",
@@ -386,7 +397,7 @@
       "resources/js/Pages/Welcome.jsx"
     ],
     "css": [
-      "assets/app-BlyvxPRW.css"
+      "assets/app-Arz-Z4r0.css"
     ]
   }
 }
