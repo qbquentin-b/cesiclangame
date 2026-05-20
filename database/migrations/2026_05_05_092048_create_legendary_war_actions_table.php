@@ -23,9 +23,9 @@ return new class extends Migration
             $table->json('troops_lost')->nullable();
             $table->timestamps();
 
-            $table->foreign('legendary_war_id')->references('id')->on('legendary_wars')->cascadeOnDelete();
-            $table->foreign('legendary_war_round_id')->references('id')->on('legendary_war_rounds')->cascadeOnDelete();
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->index('legendary_war_id');
+            $table->index('legendary_war_round_id');
+            $table->index('user_id');
         });
     }
 
