@@ -14,7 +14,7 @@ class SlotController extends Controller
         ['id' => 'bouclier',   'emoji' => '🛡️', 'weight' => 7],
         ['id' => 'or',         'emoji' => '🪙', 'weight' => 10],
         ['id' => 'nourriture', 'emoji' => '🌾', 'weight' => 14],
-        ['id' => 'feu',        'emoji' => '🔥', 'weight' => 3],
+        ['id' => 'feu',        'emoji' => '🔥', 'weight' => 6],
     ];
 
     const PAYOUTS = [

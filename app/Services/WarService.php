@@ -45,7 +45,7 @@ class WarService
     {
         DB::transaction(function () use ($war) {
             $startAt       = $war->scheduled_at ?? now();
-            $roundDuration = 6;
+            $roundDuration = 1; // heures par round (4 rounds = 4h de guerre)
             $totalRounds   = $war->total_rounds ?: 4;
 
             if (!$war->total_rounds) {
