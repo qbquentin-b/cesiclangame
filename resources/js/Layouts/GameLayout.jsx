@@ -153,7 +153,7 @@ const Sidebar = ({ activeTab }) => {
             </nav>
 
             {/* Admin */}
-            {user?.is_admin && (
+            {!!user?.is_admin && (
                 <div className="px-2 pb-2">
                     <Link
                         href="/admin"
