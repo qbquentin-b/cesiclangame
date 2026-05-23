@@ -28,9 +28,9 @@ Schedule::call(function () {
 Schedule::command('map:resolve-conquests')->everyMinute();
 Schedule::command('map:produce-resources')->hourly();
 
-// War system
-Schedule::command('war:advance-round')->hourly();
-Schedule::command('war:auto-resolve --hours=24')->hourly();
+// War system — rounds actifs uniquement entre 08h et 22h
+Schedule::command('war:advance-round')->hourly()->between('08:00', '22:00');
+Schedule::command('war:auto-resolve --hours=24')->hourly()->between('08:00', '22:00');
 Schedule::command('troops:auto-collect')->everyFiveMinutes();
 Schedule::command('war:spawn-commander-drop')->everyThreeHours()->between('09:00', '23:00');
 Schedule::command('legendary-war:advance-round')->hourly();

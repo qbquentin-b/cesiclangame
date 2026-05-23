@@ -41,12 +41,14 @@ class WarService
     private const MORALE_DROP_PER_LOSS = 15;
     private const MORALE_THRESHOLDS    = [70 => 1.0, 50 => 0.9, 30 => 0.8, 0 => 0.7];
 
+    private const DAY_START = 8;  // 08:00
+    private const DAY_END   = 22; // 22:00
+
     public function startWar(War $war): void
     {
         DB::transaction(function () use ($war) {
-            $startAt       = $war->scheduled_at ?? now();
-            $roundDuration = 1; // heures par round (4 rounds = 4h de guerre)
-            $totalRounds   = $war->total_rounds ?: 4;
+            $roundDuration = 4; // heures par round (3 phases = 12h de guerre)
+            $totalRounds   = $war->total_rounds ?: 3;
 
             if (!$war->total_rounds) {
                 $war->update(['total_rounds' => $totalRounds]);
@@ -54,18 +56,56 @@ class WarService
 
             WarRound::where('war_id', $war->id)->delete();
 
+            $cursor = $this->snapToDaytime($war->scheduled_at ?? now());
+
             for ($i = 1; $i <= $totalRounds; $i++) {
+                $roundStart = $cursor->copy();
+                $cursor     = $this->addDaytimeHours($cursor, $roundDuration);
+
                 WarRound::create([
                     'war_id'       => $war->id,
                     'round_number' => $i,
                     'status'       => $i === 1 ? 'active' : 'pending',
-                    'starts_at'    => $startAt->copy()->addHours(($i - 1) * $roundDuration),
-                    'ends_at'      => $startAt->copy()->addHours($i * $roundDuration),
+                    'starts_at'    => $roundStart,
+                    'ends_at'      => $cursor->copy(),
                 ]);
             }
 
             $war->update(['status' => 'active', 'current_round' => 1, 'morale_a' => 100, 'morale_b' => 100]);
         });
+    }
+
+    private function snapToDaytime(\Carbon\Carbon $dt): \Carbon\Carbon
+    {
+        $dt = $dt->copy();
+        if ($dt->hour >= self::DAY_END) {
+            $dt->addDay()->setTime(self::DAY_START, 0, 0);
+        } elseif ($dt->hour < self::DAY_START) {
+            $dt->setTime(self::DAY_START, 0, 0);
+        }
+        return $dt;
+    }
+
+    private function addDaytimeHours(\Carbon\Carbon $from, int $hours): \Carbon\Carbon
+    {
+        $result    = $from->copy();
+        $remaining = $hours;
+
+        while ($remaining > 0) {
+            if ($result->hour >= self::DAY_END) {
+                $result->addDay()->setTime(self::DAY_START, 0, 0);
+            }
+            $hoursLeft = self::DAY_END - $result->hour;
+            if ($remaining <= $hoursLeft) {
+                $result->addHours($remaining);
+                $remaining = 0;
+            } else {
+                $remaining -= $hoursLeft;
+                $result->addDay()->setTime(self::DAY_START, 0, 0);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -508,7 +548,7 @@ class WarService
                 'round_number' => $newNumber,
                 'status'       => 'pending',
                 'starts_at'    => $newStart,
-                'ends_at'      => $newStart->copy()->addHours(6),
+                'ends_at'      => $this->addDaytimeHours($newStart->copy(), 4),
             ]);
 
             $war->update([
